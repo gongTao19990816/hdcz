@@ -1,0 +1,141 @@
+{extend name='common/_container'} {block name="content"}
+<div class="row">
+	<div class="col-sm-12">
+		<div class="ibox float-e-margins">
+			<div class="ibox-content"> 
+				<div class="row row-lg"> 
+					<div class="col-sm-12"> 
+						<div class="row" id="searchGroup">
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">uid</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="uid" placeholder="uid" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">昵称</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="nickname" placeholder="昵称" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">状态1=正常0=封禁2=登出2096私密账号3002290=个人资料查看历史记录不可用</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="status" placeholder="状态1=正常0=封禁2=登出2096私密账号3002290=个人资料查看历史记录不可用" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">数据来源</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="sources" placeholder="数据来源" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">数据标签</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="label" placeholder="数据标签" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">1=未用，0=以用</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="if_collection" placeholder="1=未用，0=以用" />
+								</div>
+							</div>
+							<!-- search end -->
+							<div class="col-sm-1">
+								<button type="button" class="btn btn-success " onclick="CodeGoods.search()" id="">
+									<i class="fa fa-search"></i>&nbsp;搜索
+								</button>
+							</div>
+						</div>
+						<div class="btn-group-sm" id="CodeGoodsTableToolbar" role="group">
+						</div>
+						<table id="CodeGoodsTable" data-mobile-responsive="true" data-click-to-select="true">
+							<thead><tr><th data-field="selectItem" data-checkbox="true"></th></tr></thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	var CodeGoods = {id: "CodeGoodsTable",seItem: null,table: null,layerIndex: -1};
+
+	CodeGoods.initColumn = function () {
+ 		return [
+ 			{field: 'selectItem', checkbox: true},
+ 			{title: '编号', field: 'external_member_id', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: 'uid', field: 'uid', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '头像', field: 'avatar_thumb', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '粉丝数量', field: 'follower_status', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '关注别人数量', field: 'following_count', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '获得赞数量', field: 'total_favorited', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '昵称', field: 'nickname', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: 'unique_id', field: 'unique_id', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '个性签名', field: 'signature', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '状态1=正常0=封禁2=登出2096私密账号3002290=个人资料查看历史记录不可用', field: 'status', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '国家', field: 'country', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '类型', field: 'member_type', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: 'sec_uid', field: 'sec_uid', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '作品数量', field: 'aweme_count', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '更新时间', field: 'updata_time', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '1是未下载，下载之后是0', field: 'ifpic', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '来访人数', field: 'unread_viewer_count', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '首次创建时间', field: 'addtime', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '数据来源', field: 'sources', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '数据标签', field: 'label', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '1=未用，0=以用', field: 'if_collection', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 		];
+ 	};
+
+	CodeGoods.formParams = function() {
+		var queryData = {};
+		queryData['offset'] = 0;
+		queryData['uid'] = $("#uid").val();
+		queryData['nickname'] = $("#nickname").val();
+		queryData['status'] = $("#status").val();
+		queryData['sources'] = $("#sources").val();
+		queryData['label'] = $("#label").val();
+		queryData['if_collection'] = $("#if_collection").val();
+		return queryData;
+	}
+
+	CodeGoods.check = function () {
+		var selected = $('#' + this.id).bootstrapTable('getSelections');
+		if(selected.length == 0){
+			Feng.info("请先选中表格中的某一记录！");
+			return false;
+		}else{
+			CodeGoods.seItem = selected;
+			return true;
+		}
+	};
+
+	CodeGoods.search = function() {
+		CodeGoods.table.refresh({query : CodeGoods.formParams()});
+	};
+
+	$(function() {
+		var defaultColunms = CodeGoods.initColumn();
+		var url = location.search;
+		var table = new BSTable(CodeGoods.id, Feng.ctxPath+"/Externalmember/index"+url,defaultColunms,20);
+		table.setPaginationType("server");
+		table.setQueryParams(CodeGoods.formParams());
+		CodeGoods.table = table.init();
+	});
+</script>
+{/block}

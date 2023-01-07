@@ -1,0 +1,139 @@
+{extend name='common/_container'} {block name="content"}
+<div class="row">
+	<div class="col-sm-12">
+		<div class="ibox float-e-margins">
+			<div class="ibox-content"> 
+				<div class="row row-lg"> 
+					<div class="col-sm-12"> 
+						<div class="row" id="searchGroup">
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">nickname</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="nickname" placeholder="nickname" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">国家</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="country" placeholder="国家" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">ifpic</button>
+									</div>
+									<select class="form-control" id="ifpic">
+										<option value="">请选择</option>
+										<option value="1">未下载</option>
+										<option value="0">已下载</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">用户</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="member_id" placeholder="用户" />
+								</div>
+							</div>
+							<!-- search end -->
+							<div class="col-sm-1">
+								<button type="button" class="btn btn-success " onclick="CodeGoods.search()" id="">
+									<i class="fa fa-search"></i>&nbsp;搜索
+								</button>
+							</div>
+						</div>
+						<div class="btn-group-sm" id="CodeGoodsTableToolbar" role="group">
+						</div>
+						<table id="CodeGoodsTable" data-mobile-responsive="true" data-click-to-select="true">
+							<thead><tr><th data-field="selectItem" data-checkbox="true"></th></tr></thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	var CodeGoods = {id: "CodeGoodsTable",seItem: null,table: null,layerIndex: -1};
+
+	CodeGoods.initColumn = function () {
+ 		return [
+ 			{field: 'selectItem', checkbox: true},
+ 			{title: '编号', field: 'visitorlist_id', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: 'unique_id', field: 'unique_id', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '头像', field: 'avatar_thumb', visible: true, align: 'center', valign: 'middle',sortable: true,formatter:CodeGoods.avatar_thumbFormatter},
+ 			{title: 'sec_uid', field: 'sec_uid', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: 'nickname', field: 'nickname', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '个性签名', field: 'signature', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '粉丝数量', field: 'follower_status', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '关注数量', field: 'following_count', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '获赞数', field: 'total_favorited', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '国家', field: 'country', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '作品数量', field: 'aweme_count', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: 'ifpic', field: 'ifpic', visible: true, align: 'center', valign: 'middle',sortable: true,formatter:CodeGoods.ifpicFormatter},
+ 			{title: '用户', field: 'member_id', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 		];
+ 	};
+
+	CodeGoods.avatar_thumbFormatter = function(value,row,index) {
+		if(value){
+			return "<a href=\"javascript:void(0)\" onclick=\"openImg('"+value+"')\"><img height='30' src="+value+"></a>";	
+		}
+	}
+
+	CodeGoods.ifpicFormatter = function(value,row,index) {
+		if(value !== null){
+			var value = value.toString();
+			switch(value){
+				case '1':
+					return '<span class="label label-success">未下载</span>';
+				break;
+				case '0':
+					return '<span class="label label-danger">已下载</span>';
+				break;
+			}
+		}
+	}
+
+	CodeGoods.formParams = function() {
+		var queryData = {};
+		queryData['offset'] = 0;
+		queryData['nickname'] = $("#nickname").val();
+		queryData['country'] = $("#country").val();
+		queryData['ifpic'] = $("#ifpic").val();
+		queryData['member_id'] = $("#member_id").val();
+		return queryData;
+	}
+
+	CodeGoods.check = function () {
+		var selected = $('#' + this.id).bootstrapTable('getSelections');
+		if(selected.length == 0){
+			Feng.info("请先选中表格中的某一记录！");
+			return false;
+		}else{
+			CodeGoods.seItem = selected;
+			return true;
+		}
+	};
+
+	CodeGoods.search = function() {
+		CodeGoods.table.refresh({query : CodeGoods.formParams()});
+	};
+
+	$(function() {
+		var defaultColunms = CodeGoods.initColumn();
+		var url = location.search;
+		var table = new BSTable(CodeGoods.id, Feng.ctxPath+"/Visitorlist/index"+url,defaultColunms,20);
+		table.setPaginationType("server");
+		table.setQueryParams(CodeGoods.formParams());
+		CodeGoods.table = table.init();
+	});
+</script>
+{/block}

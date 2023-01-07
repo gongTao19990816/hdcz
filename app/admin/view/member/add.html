@@ -1,0 +1,153 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">账号：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="username" value="" name="username" class="form-control" placeholder="请输入账号">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">密码：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="pass" value="" name="pass" class="form-control" placeholder="请输入密码">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">昵称：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="nickname" value="" name="nickname" class="form-control" placeholder="请输入昵称">
+						</div>
+					</div>
+					<div class="form-group layui-form">
+						<label class="col-sm-2 control-label">状态：</label>
+						<div class="col-sm-9">
+							<?php if(!isset($info['status'])){ $info['status'] = '1'; }; ?>
+							<input name="status" value="1" type="radio" {if condition="$info.status eq '1'"}checked{/if} title="在线">
+							<input name="status" value="2" type="radio" {if condition="$info.status eq '2'"}checked{/if} title="离线">
+							<input name="status" value="0" type="radio" {if condition="$info.status eq '0'"}checked{/if} title="异常">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">头像：</label>
+						<div class="col-sm-6">
+							<input type="text" autocomplete="off" id="headpic" value="" {if condition="config('my.img_show_status') eq true"}onmousemove="showBigPic(this.value)" onmouseout="closeimg()"{/if} name="headpic" class="form-control" placeholder="请输入头像">
+							<span class="help-block m-b-none headpic_process"></span>
+						</div>
+						<div class="col-sm-2" style="position:relative; right:30px;">
+							<span id="headpic_upload"></span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">签名：</label>
+						<div class="col-sm-9">
+							<textarea id="autograph" name="autograph"  class="form-control" placeholder="请输入签名"></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">所属设备：</label>
+						<div class="col-sm-9">
+							<?php if(!isset($info['equipment_id'])){ $info['equipment_id'] = ''; }; ?>
+							<select lay-ignore name="equipment_id" class="form-control chosen" data-placeholder='请选择所属设备'  id="equipment_id">
+								<option value="">请选择</option>
+								{sql connect="mysql" query="select equipment_id,equipment_brand from tt_equipment"}
+									<option value="{$sql.equipment_id}" {if condition="$info.equipment_id eq $sql.equipment_id"}selected{/if}>{$sql.equipment_brand}</option>
+								{/sql}
+							</select>
+						</div>
+					</div>
+					<div class="form-group layui-form">
+						<label class="col-sm-2 control-label">开关：</label>
+						<div class="col-sm-9">
+							<?php if(!isset($info['mem_switch'])){ $info['mem_switch'] = 1; }; ?>
+							<input name="mem_switch" value="1" type="radio" {if condition="$info.mem_switch eq '1'"}checked{/if} title="开启">
+							<input name="mem_switch" value="0" type="radio" {if condition="$info.mem_switch eq '0'"}checked{/if} title="关闭">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注：</label>
+						<div class="col-sm-9">
+							<textarea id="remarks" name="remarks"  class="form-control" placeholder="请输入备注"></textarea>
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.add()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<link href='__PUBLIC__/static/js/plugins/chosen/chosen.min.css' rel='stylesheet'/>
+<script src='__PUBLIC__/static/js/plugins/chosen/chosen.jquery.js'></script>
+<script>
+layui.use(['form'],function(){});
+uploader('headpic_upload','headpic','image',false,'','{:getUploadServerUrl()}');
+$(function(){$('.chosen').chosen({search_contains: true})})
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+		username: {
+			validators: {
+				notEmpty: {
+					message: '账号不能为空'
+	 			},
+	 		}
+	 	},
+		pass: {
+			validators: {
+				notEmpty: {
+					message: '密码不能为空'
+	 			},
+	 		}
+	 	},
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('member_id').set('username').set('pass').set('nickname').set('headpic').set('autograph').set('equipment_id').set('remarks');
+};
+
+CodeInfoDlg.add = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var status = $("input[name = 'status']:checked").val();
+	 var mem_switch = $("input[name = 'mem_switch']:checked").val();
+	 var ajax = new $ax(Feng.ctxPath + "/Member/add", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set('status',status);
+	 ajax.set('mem_switch',mem_switch);
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

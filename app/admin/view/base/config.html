@@ -1,0 +1,185 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="layui-tab layui-tab-brief" lay-filter="test">
+					<ul class="layui-tab-title">
+						<li class="layui-this">基本设置</li>
+						<li>上传配置</li>
+					</ul>
+					<div class="layui-tab-content" style="margin-top:10px;">
+						<div class="layui-tab-item layui-show">
+							<div class="col-sm-7">
+							<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">站点名称：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="site_title" value="{$info.site_title}" name="site_title" class="form-control" placeholder="请输入站点名称">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">站点LOGO：</label>
+						<div class="col-sm-5">
+							<input type="text" autocomplete="off" id="site_logo" value="{$info.site_logo}" {if condition="config('my.img_show_status') eq true"}onmousemove="showBigPic(this.value)" onmouseout="closeimg()"{/if} name="site_logo" class="form-control" placeholder="请输入站点LOGO">
+							<span class="help-block m-b-none site_logo_process"></span>
+						</div>
+						<div class="col-sm-2" style="position:relative; right:30px;">
+							<span id="site_logo_upload"></span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">关键词站点：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" class="form-control" data-role="tagsinput" id="keyword" value="{$info.keyword}" name="keyword"  >
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">站点描述：</label>
+						<div class="col-sm-9">
+							<textarea id="description" name="description"  class="form-control" placeholder="请输入站点描述">{$info.description}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">站点版权：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="copyright" value="{$info.copyright}" name="copyright" class="form-control" placeholder="请输入站点版权">
+						</div>
+					</div>
+							<!-- form end -->
+							</div>
+						</div>
+						<div class="layui-tab-item">
+							<div class="col-sm-7">
+							<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">上传文件大小：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="file_size" value="{$info.file_size}" name="file_size" class="form-control" placeholder="请输入上传文件大小">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">文件类型：</label>
+						<div class="col-sm-9">
+							<textarea id="file_type" name="file_type"  class="form-control" placeholder="请输入文件类型">{$info.file_type}</textarea>
+						</div>
+					</div>
+					<div class="form-group layui-form">
+						<label class="col-sm-2 control-label">水印状态：</label>
+						<div class="col-sm-9">
+							<?php if(!isset($info['water_status'])){ $info['water_status'] = '0'; }; ?>
+							<input name="water_status" value="1" type="radio" {if condition="$info.water_status eq '1'"}checked{/if} title="正常">
+							<input name="water_status" value="0" type="radio" {if condition="$info.water_status eq '0'"}checked{/if} title="禁用">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">水印位置：</label>
+						<div class="col-sm-9">
+							<select lay-ignore name="water_position" class="form-control chosen" data-placeholder='请选择水印位置'  id="water_position">
+								<option value="">请选择</option>
+								<option value="1" {if condition="$info.water_position eq '1'"}selected{/if}>左上角水印</option>
+								<option value="2" {if condition="$info.water_position eq '2'"}selected{/if}>上居中水印</option>
+								<option value="3" {if condition="$info.water_position eq '3'"}selected{/if}>右上角水印</option>
+								<option value="4" {if condition="$info.water_position eq '4'"}selected{/if}>左居中水印</option>
+								<option value="5" {if condition="$info.water_position eq '5'"}selected{/if}>居中水印</option>
+								<option value="6" {if condition="$info.water_position eq '6'"}selected{/if}>右居中水印</option>
+								<option value="7" {if condition="$info.water_position eq '7'"}selected{/if}>左下角水印</option>
+								<option value="8" {if condition="$info.water_position eq '8'"}selected{/if}>下居中水印</option>
+								<option value="9" {if condition="$info.water_position eq '9'"}selected{/if}>右下角水印</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">水印图片：</label>
+						<div class="col-sm-5">
+							<input type="text" autocomplete="off" id="water_logo" value="{$info.water_logo}" {if condition="config('my.img_show_status') eq true"}onmousemove="showBigPic(this.value)" onmouseout="closeimg()"{/if} name="water_logo" class="form-control" placeholder="请输入水印图片">
+							<span class="help-block m-b-none water_logo_process"></span>
+						</div>
+						<div class="col-sm-2" style="position:relative; right:30px;">
+							<span id="water_logo_upload"></span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">绑定域名：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="domain" value="{$info.domain}" name="domain" class="form-control" placeholder="请输入绑定域名">
+							<span class="help-block m-b-none">上传目录绑定域名访问，请解析域名到 /public/upload目录  前面带上http://  非必填项</span>
+						</div>
+					</div>
+							<!-- form end -->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-7">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.index()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js?t=1498856285724" charset="utf-8"></script>
+<link href='__PUBLIC__/static/js/plugins/chosen/chosen.min.css' rel='stylesheet'/>
+<script src='__PUBLIC__/static/js/plugins/chosen/chosen.jquery.js'></script>
+<link rel='stylesheet' href='__PUBLIC__/static/js/plugins/tagsinput/tagsinput.css'>
+<script type='text/javascript' src='__PUBLIC__/static/js/plugins/tagsinput/tagsinput.min.js'></script>
+<script>
+layui.use(['form'],function(){});
+layui.use('element', function(){
+	var element = layui.element;
+	element.on('tab(test)', function(elem){
+		uploader('water_logo_upload','water_logo','image',false,'','{:url("admin/Upload/uploadImages")}');
+	});
+});
+uploader('site_logo_upload','site_logo','image',false,'','{:getUploadServerUrl()}');
+uploader('water_logo_upload','water_logo','image',false,'','{:getUploadServerUrl()}');
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+		site_title: {
+			validators: {
+				notEmpty: {
+					message: '站点名称不能为空'
+	 			},
+	 		}
+	 	},
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('site_title').set('site_logo').set('keyword').set('description').set('file_size').set('file_type').set('copyright').set('water_position').set('water_logo').set('domain');
+};
+
+CodeInfoDlg.index = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var water_status = $("input[name = 'water_status']:checked").val();
+	 var ajax = new $ax(Feng.ctxPath + "/Base/config", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set('water_status',water_status);
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+</script>
+
+
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

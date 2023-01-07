@@ -1,0 +1,139 @@
+{extend name='common/_container'} {block name="content"}
+<div class="row">
+	<div class="col-sm-12">
+		<div class="ibox float-e-margins">
+			<div class="ibox-content"> 
+				<div class="row row-lg"> 
+					<div class="col-sm-12"> 
+						<div class="row" id="searchGroup">
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">所属分类</button>
+									</div>
+									<select class="form-control" id="typecontrol_id">
+										<option value="">请选择</option>
+										<option value=""></option>
+									</select>
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">分组信息</button>
+									</div>
+									<select class="form-control" id="grouping_id">
+										<option value="">请选择</option>
+										<option value=""></option>
+									</select>
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">私信类型</button>
+									</div>
+									<select class="form-control" id="type">
+										<option value="">请选择</option>
+										<option value="0">文本话术</option>
+										<option value="1">短链接</option>
+										<option value="2">好友名片</option>
+										<option value="3">作品转发</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">内容</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="content" placeholder="内容" />
+								</div>
+							</div>
+							<!-- search end -->
+							<div class="col-sm-1">
+								<button type="button" class="btn btn-success " onclick="CodeGoods.search()" id="">
+									<i class="fa fa-search"></i>&nbsp;搜索
+								</button>
+							</div>
+						</div>
+						<div class="btn-group-sm" id="CodeGoodsTableToolbar" role="group">
+						</div>
+						<table id="CodeGoodsTable" data-mobile-responsive="true" data-click-to-select="true">
+							<thead><tr><th data-field="selectItem" data-checkbox="true"></th></tr></thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	var CodeGoods = {id: "CodeGoodsTable",seItem: null,table: null,layerIndex: -1};
+
+	CodeGoods.initColumn = function () {
+ 		return [
+ 			{field: 'selectItem', checkbox: true},
+ 			{title: '编号', field: 'privateletter_id', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '所属分类', field: 'typecontrol_id', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '分组信息', field: 'grouping_id', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '私信类型', field: 'type', visible: true, align: 'center', valign: 'middle',sortable: true,formatter:CodeGoods.typeFormatter},
+ 			{title: '内容', field: 'content', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 		];
+ 	};
+
+	CodeGoods.typeFormatter = function(value,row,index) {
+		if(value !== null){
+			var value = value.toString();
+			switch(value){
+				case '0':
+					return '<span class="label label-primary">文本话术</span>';
+				break;
+				case '1':
+					return '<span class="label label-success">短链接</span>';
+				break;
+				case '2':
+					return '<span class="label label-info">好友名片</span>';
+				break;
+				case '3':
+					return '<span class="label label-warning">作品转发</span>';
+				break;
+			}
+		}
+	}
+
+	CodeGoods.formParams = function() {
+		var queryData = {};
+		queryData['offset'] = 0;
+		queryData['typecontrol_id'] = $("#typecontrol_id").val();
+		queryData['grouping_id'] = $("#grouping_id").val();
+		queryData['type'] = $("#type").val();
+		queryData['content'] = $("#content").val();
+		return queryData;
+	}
+
+	CodeGoods.check = function () {
+		var selected = $('#' + this.id).bootstrapTable('getSelections');
+		if(selected.length == 0){
+			Feng.info("请先选中表格中的某一记录！");
+			return false;
+		}else{
+			CodeGoods.seItem = selected;
+			return true;
+		}
+	};
+
+	CodeGoods.search = function() {
+		CodeGoods.table.refresh({query : CodeGoods.formParams()});
+	};
+
+	$(function() {
+		var defaultColunms = CodeGoods.initColumn();
+		var url = location.search;
+		var table = new BSTable(CodeGoods.id, Feng.ctxPath+"/PrivateLetter/index"+url,defaultColunms,20);
+		table.setPaginationType("server");
+		table.setQueryParams(CodeGoods.formParams());
+		CodeGoods.table = table.init();
+	});
+</script>
+{/block}

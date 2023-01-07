@@ -1,0 +1,99 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+<input type="hidden" name='uidlibrary_id' id='uidlibrary_id' value="{$info.uidlibrary_id}" />
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">libraryid_id ：</label>
+						<div class="col-sm-9">
+							<select lay-ignore name="libraryid_id" class="form-control" id="libraryid_id">
+								<option value="">请选择</option>
+								{sql connect="mysql" query="select libraryid_id,name from tt_libraryid"}
+									<option value="{$sql.libraryid_id}" {if condition="$info.libraryid_id eq $sql.libraryid_id"}selected{/if}>{$sql.name}</option>
+								{/sql}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">uid：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="uid" value="{$info.uid}" name="uid" class="form-control" placeholder="请输入uid">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">sec_uid：</label>
+						<div class="col-sm-9">
+							<textarea id="sec_uid" name="sec_uid"  class="form-control" placeholder="请输入sec_uid">{$info.sec_uid}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">主页链接：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="url" value="{$info.url}" name="url" class="form-control" placeholder="请输入主页链接">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">添加时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" value="{if condition="$info.add_time neq ''"}{$info.add_time|date='Y-m-d H:i:s'}{/if}" name="add_time"  placeholder="请输入添加时间" class="form-control" id="add_time">
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.update()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<script>
+layui.use(['form'],function(){});
+laydate.render({elem: '#add_time',type: 'datetime',trigger:'click'});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('uidlibrary_id').set('libraryid_id').set('uid').set('sec_uid').set('url').set('add_time');
+};
+
+CodeInfoDlg.update = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var ajax = new $ax(Feng.ctxPath + "/Uidlibrary/update", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

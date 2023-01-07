@@ -1,0 +1,105 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+<input type="hidden" name='user_id' id='user_id' value="{$info.user_id}" />
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">真实姓名：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="name" value="{$info.name}" name="name" class="form-control" placeholder="请输入真实姓名">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">用户名：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="user" value="{$info.user}" name="user" class="form-control" placeholder="请输入用户名">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">密码：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="pwd" value="{$info.pwd}" name="pwd" class="form-control" placeholder="请输入密码">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">所属分组：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="role_id" value="{$info.role_id}" name="role_id" class="form-control" placeholder="请输入所属分组">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="note" value="{$info.note}" name="note" class="form-control" placeholder="请输入备注">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">状态：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="status" value="{$info.status}" name="status" class="form-control" placeholder="请输入状态">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">创建时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="create_time" value="{$info.create_time}" name="create_time" class="form-control" placeholder="请输入创建时间">
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.update()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<script>
+layui.use(['form'],function(){});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('user_id').set('name').set('user').set('pwd').set('role_id').set('note').set('status').set('create_time');
+};
+
+CodeInfoDlg.update = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var ajax = new $ax(Feng.ctxPath + "/Apiaccount/update", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

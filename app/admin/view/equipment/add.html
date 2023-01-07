@@ -1,0 +1,102 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">设备IP·：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="deviceip" value="" name="deviceip" class="form-control" placeholder="请输入设备IP·">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">IP归属：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="ipattribution" value="" name="ipattribution" class="form-control" placeholder="请输入IP归属">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">设备品牌：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="equipment_brand" value="" name="equipment_brand" class="form-control" placeholder="请输入设备品牌">
+						</div>
+					</div>
+					<div class="form-group layui-form">
+						<label class="col-sm-2 control-label">设备状态：</label>
+						<div class="col-sm-9">
+							<?php if(!isset($info['status'])){ $info['status'] = '1'; }; ?>
+							<input name="status" value="1" type="radio" {if condition="$info.status eq '1'"}checked{/if} title="在线">
+							<input name="status" value="0" type="radio" {if condition="$info.status eq '0'"}checked{/if} title="离线">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">工作时长：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="work_time" value="" name="work_time" class="form-control" placeholder="请输入工作时长">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="remarks" value="" name="remarks" class="form-control" placeholder="请输入备注">
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.add()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<script>
+layui.use(['form'],function(){});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('equipment_id').set('deviceip').set('ipattribution').set('equipment_brand').set('work_time').set('remarks');
+};
+
+CodeInfoDlg.add = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var status = $("input[name = 'status']:checked").val();
+	 var ajax = new $ax(Feng.ctxPath + "/Equipment/add", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set('status',status);
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

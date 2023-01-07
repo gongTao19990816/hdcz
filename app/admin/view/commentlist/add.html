@@ -1,0 +1,182 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论ID：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="cid" value="{$info.cid}" name="cid" class="form-control" placeholder="请输入评论ID">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论语言：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="comment_language" value="{$info.comment_language}" name="comment_language" class="form-control" placeholder="请输入评论语言">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论内容：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="text" value="{$info.text}" name="text" class="form-control" placeholder="请输入评论内容">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="create_time" value="{$info.create_time}" name="create_time" class="form-control" placeholder="请输入评论时间">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论点赞数：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="digg_count" value="{$info.digg_count}" name="digg_count" class="form-control" placeholder="请输入评论点赞数">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">作品ID：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="aweme_id" value="{$info.aweme_id}" name="aweme_id" class="form-control" placeholder="请输入作品ID">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">reply_id：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="reply_id" value="{$info.reply_id}" name="reply_id" class="form-control" placeholder="请输入reply_id">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论回复总数：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="reply_comment_total" value="{$info.reply_comment_total}" name="reply_comment_total" class="form-control" placeholder="请输入评论回复总数">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论用户ID：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="uid" value="{$info.uid}" name="uid" class="form-control" placeholder="请输入评论用户ID">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论用户sec_uid：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="sec_uid" value="{$info.sec_uid}" name="sec_uid" class="form-control" placeholder="请输入评论用户sec_uid">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论用户头像：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="avatar_medium" value="{$info.avatar_medium}" name="avatar_medium" class="form-control" placeholder="请输入评论用户头像">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论人昵称：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="nickname" value="{$info.nickname}" name="nickname" class="form-control" placeholder="请输入评论人昵称">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论人unique_id：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="unique_id" value="{$info.unique_id}" name="unique_id" class="form-control" placeholder="请输入评论人unique_id">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论人作品数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="aweme_count" value="{$info.aweme_count}" name="aweme_count" class="form-control" placeholder="请输入评论人作品数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论人关注数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="following_count" value="{$info.following_count}" name="following_count" class="form-control" placeholder="请输入评论人关注数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论人粉丝数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="follower_count" value="{$info.follower_count}" name="follower_count" class="form-control" placeholder="请输入评论人粉丝数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论人点赞数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="total_favorited" value="{$info.total_favorited}" name="total_favorited" class="form-control" placeholder="请输入评论人点赞数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论人签名：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="signature" value="{$info.signature}" name="signature" class="form-control" placeholder="请输入评论人签名">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论人国家：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="account_region" value="{$info.account_region}" name="account_region" class="form-control" placeholder="请输入评论人国家">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">membervideo_id：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="membervideo_id" value="{$info.membervideo_id}" name="membervideo_id" class="form-control" placeholder="请输入membervideo_id">
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.add()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<script>
+layui.use(['form'],function(){});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('id').set('cid').set('comment_language').set('text').set('create_time').set('digg_count').set('aweme_id').set('reply_id').set('reply_comment_total').set('uid').set('sec_uid').set('avatar_medium').set('nickname').set('unique_id').set('aweme_count').set('following_count').set('follower_count').set('total_favorited').set('signature').set('account_region').set('membervideo_id');
+};
+
+CodeInfoDlg.add = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var ajax = new $ax(Feng.ctxPath + "/Commentlist/add", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

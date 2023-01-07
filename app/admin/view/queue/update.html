@@ -1,0 +1,114 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+<input type="hidden" name='queue_id' id='queue_id' value="{$info.queue_id}" />
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">任务名称：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="name" value="{$info.name}" name="name" class="form-control" placeholder="请输入任务名称">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">事件：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="event" value="{$info.event}" name="event" class="form-control" placeholder="请输入事件">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">参数：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="param" value="{$info.param}" name="param" class="form-control" placeholder="请输入参数">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">任务数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="rwnum" value="{$info.rwnum}" name="rwnum" class="form-control" placeholder="请输入任务数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">已完成数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="oknum" value="{$info.oknum}" name="oknum" class="form-control" placeholder="请输入已完成数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">创建时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" value="{if condition="$info.createtime neq ''"}{$info.createtime|date='Y-m-d H:i:s'}{/if}" name="createtime"  placeholder="请输入创建时间" class="form-control" id="createtime">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">上次执行时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" value="{if condition="$info.lasttime neq 0"}{$info.lasttime|date='Y-m-d H:i:s'}{/if}" name="lasttime"  placeholder="请输入上次执行时间" class="form-control" id="lasttime">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">完成时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" value="{if condition="$info.filshtime neq 0"}{$info.filshtime|date='Y-m-d H:i:s'}{/if}" name="filshtime"  placeholder="请输入完成时间" class="form-control" id="filshtime">
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.update()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<script>
+layui.use(['form'],function(){});
+laydate.render({elem: '#createtime',type: 'datetime',trigger:'click'});
+laydate.render({elem: '#lasttime',type: 'datetime',trigger:'click'});
+laydate.render({elem: '#filshtime',type: 'datetime',trigger:'click'});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('queue_id').set('name').set('event').set('param').set('rwnum').set('oknum').set('createtime').set('lasttime').set('filshtime');
+};
+
+CodeInfoDlg.update = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var ajax = new $ax(Feng.ctxPath + "/Queue/update", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

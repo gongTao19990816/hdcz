@@ -1,0 +1,132 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+<input type="hidden" name='membervideo_id' id='membervideo_id' value="{$info.membervideo_id}" />
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">用户：</label>
+						<div class="col-sm-9">
+							<select lay-ignore name="member_id" class="form-control chosen" data-placeholder='请选择用户'  id="member_id">
+								<option value="">请选择</option>
+								{sql connect="mysql" query="select member_id,nickname from tt_member"}
+									<option value="{$sql.member_id}" {if condition="$info.member_id eq $sql.member_id"}selected{/if}>{$sql.nickname}</option>
+								{/sql}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">视频id：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="aweme_id" value="{$info.aweme_id}" name="aweme_id" class="form-control" placeholder="请输入视频id">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="comment_count" value="{$info.comment_count}" name="comment_count" class="form-control" placeholder="请输入评论数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">点赞数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="digg_count" value="{$info.digg_count}" name="digg_count" class="form-control" placeholder="请输入点赞数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">分享数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="share_count" value="{$info.share_count}" name="share_count" class="form-control" placeholder="请输入分享数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">播放数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="play_count" value="{$info.play_count}" name="play_count" class="form-control" placeholder="请输入播放数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">视频描述：</label>
+						<div class="col-sm-9">
+							<textarea id="video_desc" name="video_desc"  class="form-control" placeholder="请输入视频描述">{$info.video_desc}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">视频地址：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="video_url" value="{$info.video_url}" name="video_url" class="form-control" placeholder="请输入视频地址">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">封面图：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="video_pic_url" value="{$info.video_pic_url}" name="video_pic_url" class="form-control" placeholder="请输入封面图">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">添加时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" value="{if condition="$info.addtime neq ''"}{$info.addtime|date='Y-m-d H:i:s'}{/if}" name="addtime"  placeholder="请输入添加时间" class="form-control" id="addtime">
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.update()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<link href='__PUBLIC__/static/js/plugins/chosen/chosen.min.css' rel='stylesheet'/>
+<script src='__PUBLIC__/static/js/plugins/chosen/chosen.jquery.js'></script>
+<script>
+layui.use(['form'],function(){});
+$(function(){$('.chosen').chosen({search_contains: true})})
+laydate.render({elem: '#addtime',type: 'datetime',trigger:'click'});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('membervideo_id').set('member_id').set('aweme_id').set('comment_count').set('digg_count').set('share_count').set('play_count').set('video_desc').set('video_url').set('video_pic_url').set('addtime');
+};
+
+CodeInfoDlg.update = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var ajax = new $ax(Feng.ctxPath + "/Membervideo/update", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

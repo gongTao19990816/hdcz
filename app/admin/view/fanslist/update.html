@@ -1,0 +1,135 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+<input type="hidden" name='fanslist_id' id='fanslist_id' value="{$info.fanslist_id}" />
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">昵称：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="nickname" value="{$info.nickname}" name="nickname" class="form-control" placeholder="请输入昵称">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">关注着的用户id：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="member_id" value="{$info.member_id}" name="member_id" class="form-control" placeholder="请输入关注着的用户id">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">关注的时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="create_time" value="{$info.create_time}" name="create_time" class="form-control" placeholder="请输入关注的时间">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">头像：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="avatar_thumb" value="{$info.avatar_thumb}" name="avatar_thumb" class="form-control" placeholder="请输入头像">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">sec_uid：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="sec_uid" value="{$info.sec_uid}" name="sec_uid" class="form-control" placeholder="请输入sec_uid">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">关注数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="following_count" value="{$info.following_count}" name="following_count" class="form-control" placeholder="请输入关注数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">粉丝：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="follower_count" value="{$info.follower_count}" name="follower_count" class="form-control" placeholder="请输入粉丝">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">favoriting_count：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="favoriting_count" value="{$info.favoriting_count}" name="favoriting_count" class="form-control" placeholder="请输入favoriting_count">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">unique_id：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="unique_id" value="{$info.unique_id}" name="unique_id" class="form-control" placeholder="请输入unique_id">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">uid：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="uid" value="{$info.uid}" name="uid" class="form-control" placeholder="请输入uid">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">作品数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="aweme_count" value="{$info.aweme_count}" name="aweme_count" class="form-control" placeholder="请输入作品数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">国家：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="region" value="{$info.region}" name="region" class="form-control" placeholder="请输入国家">
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.update()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<script>
+layui.use(['form'],function(){});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('fanslist_id').set('nickname').set('member_id').set('create_time').set('avatar_thumb').set('sec_uid').set('following_count').set('follower_count').set('favoriting_count').set('unique_id').set('uid').set('aweme_count').set('region');
+};
+
+CodeInfoDlg.update = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var ajax = new $ax(Feng.ctxPath + "/Fanslist/update", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

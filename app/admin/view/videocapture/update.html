@@ -1,0 +1,133 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+<input type="hidden" name='video_capture_id' id='video_capture_id' value="{$info.video_capture_id}" />
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">用户id：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="uid" value="{$info.uid}" name="uid" class="form-control" placeholder="请输入用户id">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">国家：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="country" value="{$info.country}" name="country" class="form-control" placeholder="请输入国家">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">视频id：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="aweme_id" value="{$info.aweme_id}" name="aweme_id" class="form-control" placeholder="请输入视频id">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="comment_count" value="{$info.comment_count}" name="comment_count" class="form-control" placeholder="请输入评论数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">点赞数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="digg_count" value="{$info.digg_count}" name="digg_count" class="form-control" placeholder="请输入点赞数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">分享数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="share_count" value="{$info.share_count}" name="share_count" class="form-control" placeholder="请输入分享数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">播放数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="play_count" value="{$info.play_count}" name="play_count" class="form-control" placeholder="请输入播放数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">视频描述：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="video_desc" value="{$info.video_desc}" name="video_desc" class="form-control" placeholder="请输入视频描述">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">视频地址：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="video_url" value="{$info.video_url}" name="video_url" class="form-control" placeholder="请输入视频地址">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">添加时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="addtime" value="{$info.addtime}" name="addtime" class="form-control" placeholder="请输入添加时间">
+						</div>
+					</div>
+					<div class="form-group layui-form">
+						<label class="col-sm-2 control-label">1是未下载，0已下载：</label>
+						<div class="col-sm-9">
+							<?php if(!isset($info['ifvideo'])){ $info['ifvideo'] = '1'; }; ?>
+							<input name="ifvideo" value="1" type="radio" {if condition="$info.ifvideo eq '1'"}checked{/if} title="未下载">
+							<input name="ifvideo" value="0" type="radio" {if condition="$info.ifvideo eq '0'"}checked{/if} title="已下载">
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.update()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<script>
+layui.use(['form'],function(){});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('video_capture_id').set('uid').set('country').set('aweme_id').set('comment_count').set('digg_count').set('share_count').set('play_count').set('video_desc').set('video_url').set('addtime');
+};
+
+CodeInfoDlg.update = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var ifvideo = $("input[name = 'ifvideo']:checked").val();
+	 var ajax = new $ax(Feng.ctxPath + "/Videocapture/update", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set('ifvideo',ifvideo);
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

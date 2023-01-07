@@ -1,0 +1,54 @@
+{extend name='common/_container'} 
+{block name="content"} 
+<div class="ibox float-e-margins"> 
+	<div class="ibox-content"> 
+		<table class="table table-bordered" style="word-break:break-all;"> 
+			<tbody> 
+				<tr> 
+					<td style="background-color:#F5F5F6; font-weight:bold; text-align:right" width="15%">账号：</td> 
+					<td>{$info.username}</td>   
+				</tr> 
+				<tr> 
+					<td style="background-color:#F5F5F6; font-weight:bold; text-align:right" width="15%">密码：</td> 
+					<td>{$info.pass}</td>   
+				</tr> 
+				<tr> 
+					<td style="background-color:#F5F5F6; font-weight:bold; text-align:right" width="15%">Access_token：</td> 
+					<td>{$info.access_token}</td>   
+				</tr> 
+			</tbody> 
+		</table> 
+	</div> 
+</div> 
+<script type="text/javascript" charset="utf-8">
+    $.ajax({
+		url: 'https://api-va.tiktokv.com/aweme/v1/user/profile/self/?residence=SG&device_id=7163539916739200518&os_version=13.1.2&iid=7163542126649902853&app_name=musical_ly&locale=en&ac=WIFI&sys_region=SG&js_sdk_version=&version_code=24.0.0&channel=App+Store&op_region=SG&tma_jssdk_version=&os_api=18&idfa=E7C57F01-2D1D-4F4F-B868-C011C8C7CFAD&idfv=E7C57F01-2D1D-4F4F-B868-C011C8C7CFAD&device_platform=iphone&device_type=iPhone9,1&openudid=cb721fa86506894bf506a9c543c2a86d57f6ba3f&account_region=sg&tz_name=Asia/Singapore&tz_offset=28800&app_language=en&carrier_region=SG%C2%A4t_region%3DSG&aid=1233&mcc_mnc=52501&screen_width=750&content_language=&build_number=240005&language=en&cdid=0D701B2B-002A-4713-8BCB-698CFCDADFB3&uoo=0&app_version=24.0.0&need_pv=1',
+		type: 'get',
+		data: '',
+		dataType: 'json',
+	    headers: {
+            "sdk-version": "2",
+            "user-agent": "TikTok 24.0.0 rv:240005 (iPhone; iOS 13.1.2; en_US) Cronet",
+            "x-ss-dp": "1233",
+            "x-tt-store-idc": "alisg",
+            "x-tt-store-region": "sg",
+            "x-tt-token": "017bd89fc2cc81b0dc1ca39d4b0b85618404611590d0b2f6fcf917f9f9b0f92750dda4b490dd68d596e14616f2c90ebd212bf1ff4d72f4f7dadcbd86d4f0007a4a590f501a5abfa7d31122ac017d09a741fad9624a7c65c58d43b7f002563e78d69ef-CkBhNDAyOTU5NjNmYmYxZmFjZGIxZmJmMDFmYmI5NzAxMjAzNjNjMjdiZjhkYjg3NDlmYmM1ZjllMTI4ZDE2OGUw-2.0.0",
+            "cookie": "cmpl_token=AgQQAPO8F-RPsLNU7dAWN90_-QuYqggNf4Q3YMuySA; d_ticket=98a9e3586dec4b6aaccbceb81903127983f89; msToken=hh6PLm3n52kUSnybKkKH-t8g_kQpiud44jzWkYGDM0E2uaNLwtjUuPtLQVr_CKELIehR1cbtXABQowls61Iy2y76RapDe3F6d6p1Xo1rbg==; multi_sids=7163541969573315590%3A7bd89fc2cc81b0dc1ca39d4b0b856184; odin_tt=2e7bd1a25d9cdc66601e505a0521839fb22401d0b86a905feb2ab79a77dfcb8651519fce0a3d9a3ccdeb093dd671e1d63ad5089354ef21857aac66791bb20aec61893d45089319e9b9aba9cc2bc26e76; sessionid=7bd89fc2cc81b0dc1ca39d4b0b856184; sessionid_ss=7bd89fc2cc81b0dc1ca39d4b0b856184; sid_guard=7bd89fc2cc81b0dc1ca39d4b0b856184%7C1667892241%7C15552000%7CSun%2C+07-May-2023+07%3A24%3A01+GMT; sid_tt=7bd89fc2cc81b0dc1ca39d4b0b856184; store-country-code=sg; store-country-code-src=uid; store-idc=alisg; tt-target-idc=alisg; tt-target-idc-sign=djCgwXID6K7-Hn-kEayPz93LZzyPL5LEb4H5j5wupDFA2zjwdVmEdM-J8pyCCLGUlUjR3cEWpdMllMOUq82nRt7NmAiDykjIJdD9YF429G1NrGBe--29vffchH4wczmXAXF78H2k8shlsEOmlRFX73mUoS12wMlx7TAiZOmMXWVUR292FCMkcCmhs5CWygHCH4OYGYlT4-XU14g7UPd9gYvprgN9bM7HKjo8sTJykzq_5cBBbPvvO01vc_kqcfHva2sNnsGJJr3fv2LDoVCMhvhkSTccIHSMhhho-_JdpNUE6pDMyWksDp6YnqgMAmRFyQ-AuDvsQYK1Zmb1p0Vnt_C0i3FdO0Sopx-RLld7QPDGl1x5Egv-IYJaH31lw8Y7H-Q6rz69wfvBKdiSSwZXKwSFa6M4U0S3AYjQBdARifzzl0dx68hwmi4gMbhSbseO41nrlh1rP_QOvfeNi3JHJ0XLY0Yl27NBVZKEknmGC7fedau7De9S5-TdXIjDOmSL; uid_tt=f62516e13e0e6a3214b0d392dbfbb64dc46f343286570be9b2863f1749351bf6; uid_tt_ss=f62516e13e0e6a3214b0d392dbfbb64dc46f343286570be9b2863f1749351bf6; passport_csrf_token=12e7dd719e4478586ffa101dedceefce; passport_csrf_token_default=12e7dd719e4478586ffa101dedceefce; install_id=7163542126649902853; ttreq=1$7120717205b84959be9730b8bea2349b586c3992",
+            "x-ss-cookie": "cmpl_token=AgQQAPO8F-RPsLNU7dAWN90_-QuYqggNf4Q3YMuySA; d_ticket=98a9e3586dec4b6aaccbceb81903127983f89; msToken=hh6PLm3n52kUSnybKkKH-t8g_kQpiud44jzWkYGDM0E2uaNLwtjUuPtLQVr_CKELIehR1cbtXABQowls61Iy2y76RapDe3F6d6p1Xo1rbg==; multi_sids=7163541969573315590%3A7bd89fc2cc81b0dc1ca39d4b0b856184; odin_tt=2e7bd1a25d9cdc66601e505a0521839fb22401d0b86a905feb2ab79a77dfcb8651519fce0a3d9a3ccdeb093dd671e1d63ad5089354ef21857aac66791bb20aec61893d45089319e9b9aba9cc2bc26e76; sessionid=7bd89fc2cc81b0dc1ca39d4b0b856184; sessionid_ss=7bd89fc2cc81b0dc1ca39d4b0b856184; sid_guard=7bd89fc2cc81b0dc1ca39d4b0b856184%7C1667892241%7C15552000%7CSun%2C+07-May-2023+07%3A24%3A01+GMT; sid_tt=7bd89fc2cc81b0dc1ca39d4b0b856184; store-country-code=sg; store-country-code-src=uid; store-idc=alisg; tt-target-idc=alisg; tt-target-idc-sign=djCgwXID6K7-Hn-kEayPz93LZzyPL5LEb4H5j5wupDFA2zjwdVmEdM-J8pyCCLGUlUjR3cEWpdMllMOUq82nRt7NmAiDykjIJdD9YF429G1NrGBe--29vffchH4wczmXAXF78H2k8shlsEOmlRFX73mUoS12wMlx7TAiZOmMXWVUR292FCMkcCmhs5CWygHCH4OYGYlT4-XU14g7UPd9gYvprgN9bM7HKjo8sTJykzq_5cBBbPvvO01vc_kqcfHva2sNnsGJJr3fv2LDoVCMhvhkSTccIHSMhhho-_JdpNUE6pDMyWksDp6YnqgMAmRFyQ-AuDvsQYK1Zmb1p0Vnt_C0i3FdO0Sopx-RLld7QPDGl1x5Egv-IYJaH31lw8Y7H-Q6rz69wfvBKdiSSwZXKwSFa6M4U0S3AYjQBdARifzzl0dx68hwmi4gMbhSbseO41nrlh1rP_QOvfeNi3JHJ0XLY0Yl27NBVZKEknmGC7fedau7De9S5-TdXIjDOmSL; uid_tt=f62516e13e0e6a3214b0d392dbfbb64dc46f343286570be9b2863f1749351bf6; uid_tt_ss=f62516e13e0e6a3214b0d392dbfbb64dc46f343286570be9b2863f1749351bf6; passport_csrf_token=12e7dd719e4478586ffa101dedceefce; passport_csrf_token_default=12e7dd719e4478586ffa101dedceefce; install_id=7163542126649902853; ttreq=1$7120717205b84959be9730b8bea2349b586c3992",
+            "passport-sdk-version": "5.12.1",
+            "x-vc-bdturing-sdk-version": "2.2.0",
+            "x-tt-dm-status": "login=1;ct=1;rt=1",
+            "x-bd-kmsv": "0",
+            "x-tt-store-region-src": "uid",
+            "x-gorgon": "8404101e000039ca96ffa605785b719e777341f7cf71897435ca",
+            "x-khronos": "1668252975",
+            "x-argus": "Cs/I6O2tSAffNc/1Bv7DdMT1rsudCT1fISAa8JYSCsbVNnL3vst8d/OmMYsOTnDK7E5PgkmrKxhZSHjIkEDoObZ3qH5pDuu0511ze0RLyRY/Mu4ISgQ1+YbPkh2RQOjiY4UoCEfnIkrb+oi6wBHrf+P+fVhX4c50EIuKFjHZCLeguUPdKRRjNcPx+N0FxZJN9+gzmV7DFR8Aa8nZ5ZaOxNwd1AXUsl12xqGv0STOuCyhK5rL5gf9culoF5QDcGowj++Vw8BMk/AGX/8S1ga4cGG5aH6DaHjCnRP2L7fHdTGwxMZYuWQobKRoIsrQf3T74GtitNbnSrPfXsXyIoQUQYu5",
+            "x-ladon": "J2IYfAkjbkmOedq+JdeRQTA3nhjH7ZcjLvjavhRPtmbNB3JH"
+        },
+		success: function (res) {
+		  console.log(res)
+		 },
+	})
+</script>
+
+{/block} 

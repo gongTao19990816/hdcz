@@ -1,0 +1,127 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">所属任务：</label>
+						<div class="col-sm-9">
+							<?php if(!isset($info['videocomments_id'])){ $info['videocomments_id'] = ''; }; ?>
+							<select lay-ignore name="videocomments_id" class="form-control" id="videocomments_id">
+								<option value="">请选择</option>
+								{sql connect="mysql" query="select videocomments_id,task_name from tt_videocomments"}
+									<option value="{$sql.videocomments_id}" {if condition="$info.videocomments_id eq $sql.videocomments_id"}selected{/if}>{$sql.task_name}</option>
+								{/sql}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">uid：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="uid" value="" name="uid" class="form-control" placeholder="请输入uid">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">视频的id：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="aweme_id" value="" name="aweme_id" class="form-control" placeholder="请输入视频的id">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">评论内容：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="text" value="" name="text" class="form-control" placeholder="请输入评论内容">
+						</div>
+					</div>
+					<div class="form-group layui-form">
+						<label class="col-sm-2 control-label">状态：</label>
+						<div class="col-sm-9">
+							<?php if(!isset($info['status'])){ $info['status'] = '1'; }; ?>
+							<input name="status" value="1" type="radio" {if condition="$info.status eq '1'"}checked{/if} title="未执行">
+							<input name="status" value="0" type="radio" {if condition="$info.status eq '0'"}checked{/if} title="失败">
+							<input name="status" value="2" type="radio" {if condition="$info.status eq '2'"}checked{/if} title="成功">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">失败原因：</label>
+						<div class="col-sm-9">
+							<textarea id="failure_reason" name="failure_reason"  class="form-control" placeholder="请输入失败原因"></textarea>
+						</div>
+					</div>
+					<div class="form-group layui-form">
+						<label class="col-sm-2 control-label">执行方式：</label>
+						<div class="col-sm-9">
+							<?php if(!isset($info['mode'])){ $info['mode'] = '1'; }; ?>
+							<input name="mode" value="1" type="radio" {if condition="$info.mode eq '1'"}checked{/if} title="立即执行">
+							<input name="mode" value="0" type="radio" {if condition="$info.mode eq '0'"}checked{/if} title="定时执行">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">执行时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" value="{:date('Y-m-d H:i:s')}" name="exe_time"  placeholder="请输入执行时间" class="form-control" id="exe_time">
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.add()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<script>
+layui.use(['form'],function(){});
+laydate.render({elem: '#pay_time',type: 'datetime',trigger:'click'});
+laydate.render({elem: '#exe_time',type: 'datetime',trigger:'click'});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('videocommentdetails_id').set('videocomments_id').set('uid').set('aweme_id').set('text').set('pay_time').set('failure_reason').set('exe_time');
+};
+
+CodeInfoDlg.add = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var status = $("input[name = 'status']:checked").val();
+	 var mode = $("input[name = 'mode']:checked").val();
+	 var ajax = new $ax(Feng.ctxPath + "/Videocommentdetails/add", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set('status',status);
+	 ajax.set('mode',mode);
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

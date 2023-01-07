@@ -1,0 +1,110 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">菜单名称：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="menu_name" value="" name="menu_name" class="form-control" placeholder="请输入菜单名称">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">菜单路由：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="url" value="" name="url" class="form-control" placeholder="请输入菜单路由">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">菜单icon：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="menu_icon" value="" name="menu_icon" class="form-control" placeholder="请输入菜单icon">
+						</div>
+					</div>
+					<div class="form-group layui-form">
+						<label class="col-sm-2 control-label">状态 0隐藏 1显示：</label>
+						<div class="col-sm-9">
+							<?php if(!isset($info['status'])){ $info['status'] = '1'; }; ?>
+							<input name="status" value="1" type="radio" {if condition="$info.status eq '1'"}checked{/if} title="显示">
+							<input name="status" value="0" type="radio" {if condition="$info.status eq '0'"}checked{/if} title="隐藏">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">父级：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="pid" value="0" name="pid" class="form-control" placeholder="请输入父级">
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.add()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<script>
+layui.use(['form'],function(){});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+		menu_name: {
+			validators: {
+				notEmpty: {
+					message: '菜单名称不能为空'
+	 			},
+	 		}
+	 	},
+		url: {
+			validators: {
+				notEmpty: {
+					message: '菜单路由不能为空'
+	 			},
+	 		}
+	 	},
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('menulist_id').set('menu_name').set('url').set('menu_icon').set('pid');
+};
+
+CodeInfoDlg.add = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var status = $("input[name = 'status']:checked").val();
+	 var ajax = new $ax(Feng.ctxPath + "/Menulist/add", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set('status',status);
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

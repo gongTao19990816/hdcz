@@ -1,0 +1,182 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">uid：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="uid" value="{$info.uid}" name="uid" class="form-control" placeholder="请输入uid">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">头像：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="avatar_thumb" value="{$info.avatar_thumb}" name="avatar_thumb" class="form-control" placeholder="请输入头像">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">粉丝数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="follower_status" value="{$info.follower_status}" name="follower_status" class="form-control" placeholder="请输入粉丝数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">关注别人数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="following_count" value="{$info.following_count}" name="following_count" class="form-control" placeholder="请输入关注别人数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">获得赞数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="total_favorited" value="{$info.total_favorited}" name="total_favorited" class="form-control" placeholder="请输入获得赞数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">昵称：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="nickname" value="{$info.nickname}" name="nickname" class="form-control" placeholder="请输入昵称">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">unique_id：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="unique_id" value="{$info.unique_id}" name="unique_id" class="form-control" placeholder="请输入unique_id">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">个性签名：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="signature" value="{$info.signature}" name="signature" class="form-control" placeholder="请输入个性签名">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">状态1=正常0=封禁2=登出2096私密账号3002290=个人资料查看历史记录不可用：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="status" value="{$info.status}" name="status" class="form-control" placeholder="请输入状态1=正常0=封禁2=登出2096私密账号3002290=个人资料查看历史记录不可用">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">国家：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="country" value="{$info.country}" name="country" class="form-control" placeholder="请输入国家">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">类型：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="member_type" value="{$info.member_type}" name="member_type" class="form-control" placeholder="请输入类型">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">sec_uid：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="sec_uid" value="{$info.sec_uid}" name="sec_uid" class="form-control" placeholder="请输入sec_uid">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">作品数量：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="aweme_count" value="{$info.aweme_count}" name="aweme_count" class="form-control" placeholder="请输入作品数量">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">更新时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="updata_time" value="{$info.updata_time}" name="updata_time" class="form-control" placeholder="请输入更新时间">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">1是未下载，下载之后是0：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="ifpic" value="{$info.ifpic}" name="ifpic" class="form-control" placeholder="请输入1是未下载，下载之后是0">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">来访人数：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="unread_viewer_count" value="{$info.unread_viewer_count}" name="unread_viewer_count" class="form-control" placeholder="请输入来访人数">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">首次创建时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="addtime" value="{$info.addtime}" name="addtime" class="form-control" placeholder="请输入首次创建时间">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">数据来源：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="sources" value="{$info.sources}" name="sources" class="form-control" placeholder="请输入数据来源">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">数据标签：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="label" value="{$info.label}" name="label" class="form-control" placeholder="请输入数据标签">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">1=未用，0=以用：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="if_collection" value="{$info.if_collection}" name="if_collection" class="form-control" placeholder="请输入1=未用，0=以用">
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.add()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<script>
+layui.use(['form'],function(){});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('external_member_id').set('uid').set('avatar_thumb').set('follower_status').set('following_count').set('total_favorited').set('nickname').set('unique_id').set('signature').set('status').set('country').set('member_type').set('sec_uid').set('aweme_count').set('updata_time').set('ifpic').set('unread_viewer_count').set('addtime').set('sources').set('label').set('if_collection');
+};
+
+CodeInfoDlg.add = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var ajax = new $ax(Feng.ctxPath + "/Externalmember/add", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

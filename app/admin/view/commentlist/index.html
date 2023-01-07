@@ -1,0 +1,393 @@
+{extend name='common/_container'} {block name="content"}
+<div class="row">
+	<div class="col-sm-12">
+		<div class="ibox float-e-margins">
+			<div class="ibox-content"> 
+				<div class="row row-lg"> 
+					<div class="col-sm-12"> 
+						<div class="row" id="searchGroup">
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论ID</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="cid" placeholder="评论ID" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论语言</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="comment_language" placeholder="评论语言" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论内容</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="text" placeholder="评论内容" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论时间</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="create_time" placeholder="评论时间" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论点赞数</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="digg_count" placeholder="评论点赞数" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">作品ID</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="aweme_id" placeholder="作品ID" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">reply_id</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="reply_id" placeholder="reply_id" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论回复总数</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="reply_comment_total" placeholder="评论回复总数" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论用户ID</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="uid" placeholder="评论用户ID" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论用户sec_uid</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="sec_uid" placeholder="评论用户sec_uid" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论用户头像</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="avatar_medium" placeholder="评论用户头像" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论人昵称</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="nickname" placeholder="评论人昵称" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论人unique_id</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="unique_id" placeholder="评论人unique_id" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论人作品数量</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="aweme_count" placeholder="评论人作品数量" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论人关注数量</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="following_count" placeholder="评论人关注数量" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论人粉丝数量</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="follower_count" placeholder="评论人粉丝数量" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论人点赞数量</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="total_favorited" placeholder="评论人点赞数量" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论人签名</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="signature" placeholder="评论人签名" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">评论人国家</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="account_region" placeholder="评论人国家" />
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">membervideo_id</button>
+									</div>
+									<input type="text" autocomplete="off" class="form-control" id="membervideo_id" placeholder="membervideo_id" />
+								</div>
+							</div>
+							<!-- search end -->
+							<div class="col-sm-1">
+								<button type="button" class="btn btn-success " onclick="CodeGoods.search()" id="">
+									<i class="fa fa-search"></i>&nbsp;搜索
+								</button>
+							</div>
+						</div>
+						<div class="btn-group-sm" id="CodeGoodsTableToolbar" role="group">
+						{if condition="in_array('admin/Commentlist/add',session('admin.nodes')) || session('admin.role_id') eq 1"}
+						<button type="button" id="add" class="btn btn-primary button-margin" onclick="CodeGoods.add()">
+						<i class="fa fa-plus"></i>&nbsp;添加
+						</button>
+						{/if}
+						{if condition="in_array('admin/Commentlist/update',session('admin.nodes')) || session('admin.role_id') eq 1"}
+						<button type="button" id="update" class="btn btn-success button-margin" onclick="CodeGoods.update()">
+						<i class="fa fa-pencil"></i>&nbsp;修改
+						</button>
+						{/if}
+						{if condition="in_array('admin/Commentlist/delete',session('admin.nodes')) || session('admin.role_id') eq 1"}
+						<button type="button" id="delete" class="btn btn-danger button-margin" onclick="CodeGoods.delete()">
+						<i class="fa fa-trash"></i>&nbsp;删除
+						</button>
+						{/if}
+						{if condition="in_array('admin/Commentlist/view',session('admin.nodes')) || session('admin.role_id') eq 1"}
+						<button type="button" id="view" class="btn btn-info button-margin" onclick="CodeGoods.view()">
+						<i class="fa fa-plus"></i>&nbsp;查看详情
+						</button>
+						{/if}
+						</div>
+						<table id="CodeGoodsTable" data-mobile-responsive="true" data-click-to-select="true">
+							<thead><tr><th data-field="selectItem" data-checkbox="true"></th></tr></thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	var CodeGoods = {id: "CodeGoodsTable",seItem: null,table: null,layerIndex: -1};
+
+	CodeGoods.initColumn = function () {
+ 		return [
+ 			{field: 'selectItem', checkbox: true},
+ 			{title: '编号', field: 'id', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论ID', field: 'cid', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论语言', field: 'comment_language', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论内容', field: 'text', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论时间', field: 'create_time', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论点赞数', field: 'digg_count', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '作品ID', field: 'aweme_id', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: 'reply_id', field: 'reply_id', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论回复总数', field: 'reply_comment_total', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论用户ID', field: 'uid', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论用户sec_uid', field: 'sec_uid', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论用户头像', field: 'avatar_medium', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论人昵称', field: 'nickname', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论人unique_id', field: 'unique_id', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论人作品数量', field: 'aweme_count', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论人关注数量', field: 'following_count', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论人粉丝数量', field: 'follower_count', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论人点赞数量', field: 'total_favorited', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论人签名', field: 'signature', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '评论人国家', field: 'account_region', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: 'membervideo_id', field: 'membervideo_id', visible: true, align: 'center', valign: 'middle',sortable: true},
+ 			{title: '操作', field: '', visible: true, align: 'center', valign: 'middle',formatter: 'CodeGoods.buttonFormatter'},
+ 		];
+ 	};
+
+	CodeGoods.buttonFormatter = function(value,row,index) {
+		if(row.id){
+			var str= '';
+			{if condition="in_array('admin/Commentlist/update',session('admin.nodes')) || session('admin.role_id') eq 1"}
+			str += '<button type="button" class="btn btn-success btn-xs" title="修改"  onclick="CodeGoods.update('+row.id+')"><i class="fa fa-pencil"></i>&nbsp;修改</button>&nbsp;';
+			{/if}
+			{if condition="in_array('admin/Commentlist/delete',session('admin.nodes')) || session('admin.role_id') eq 1"}
+			str += '<button type="button" class="btn btn-danger btn-xs" title="删除"  onclick="CodeGoods.delete('+row.id+')"><i class="fa fa-trash"></i>&nbsp;删除</button>&nbsp;';
+			{/if}
+			return str;
+		}
+	}
+
+	CodeGoods.formParams = function() {
+		var queryData = {};
+		queryData['offset'] = 0;
+		queryData['cid'] = $("#cid").val();
+		queryData['comment_language'] = $("#comment_language").val();
+		queryData['text'] = $("#text").val();
+		queryData['create_time'] = $("#create_time").val();
+		queryData['digg_count'] = $("#digg_count").val();
+		queryData['aweme_id'] = $("#aweme_id").val();
+		queryData['reply_id'] = $("#reply_id").val();
+		queryData['reply_comment_total'] = $("#reply_comment_total").val();
+		queryData['uid'] = $("#uid").val();
+		queryData['sec_uid'] = $("#sec_uid").val();
+		queryData['avatar_medium'] = $("#avatar_medium").val();
+		queryData['nickname'] = $("#nickname").val();
+		queryData['unique_id'] = $("#unique_id").val();
+		queryData['aweme_count'] = $("#aweme_count").val();
+		queryData['following_count'] = $("#following_count").val();
+		queryData['follower_count'] = $("#follower_count").val();
+		queryData['total_favorited'] = $("#total_favorited").val();
+		queryData['signature'] = $("#signature").val();
+		queryData['account_region'] = $("#account_region").val();
+		queryData['membervideo_id'] = $("#membervideo_id").val();
+		return queryData;
+	}
+
+	CodeGoods.check = function () {
+		var selected = $('#' + this.id).bootstrapTable('getSelections');
+		if(selected.length == 0){
+			Feng.info("请先选中表格中的某一记录！");
+			return false;
+		}else{
+			CodeGoods.seItem = selected;
+			return true;
+		}
+	};
+
+	CodeGoods.add = function (value) {
+		var url = location.search;
+		var index = layer.open({type: 2,title: '添加',area: ['800px', '100%'],fix: false, maxmin: true,content: Feng.ctxPath + '/Commentlist/add'+url});
+		this.layerIndex = index;
+		if(!IsPC()){layer.full(index)}
+	}
+
+
+	CodeGoods.update = function (value) {
+		if(value){
+			var index = layer.open({type: 2,title: '修改',area: ['800px', '100%'],fix: false, maxmin: true,content: Feng.ctxPath + '/Commentlist/update?id='+value});
+			if(!IsPC()){layer.full(index)}
+		}else{
+			if (this.check()) {
+				var idx = '';
+				$.each(CodeGoods.seItem, function() {
+					idx += ',' + this.id;
+				});
+				idx = idx.substr(1);
+				if(idx.indexOf(",") !== -1){
+					Feng.info("请选择单条数据！");
+					return false;
+				}
+				var index = layer.open({type: 2,title: '修改',area: ['800px', '100%'],fix: false, maxmin: true,content: Feng.ctxPath + '/Commentlist/update?id='+idx});
+				this.layerIndex = index;
+				if(!IsPC()){layer.full(index)}
+			}
+		}
+	}
+
+
+	CodeGoods.delete = function (value) {
+		if(value){
+			Feng.confirm("是否删除选中项？", function () {
+				var ajax = new $ax(Feng.ctxPath + "/Commentlist/delete", function (data) {
+					if ('00' === data.status) {
+						Feng.success(data.msg);
+						CodeGoods.table.refresh();
+					} else {
+						Feng.error(data.msg);
+					}
+				});
+				ajax.set('id', value);
+				ajax.start();
+			});
+		}else{
+			if (this.check()) {
+				var idx = '';
+				$.each(CodeGoods.seItem, function() {
+					idx += ',' + this.id;
+				});
+				idx = idx.substr(1);
+				Feng.confirm("是否删除选中项？", function () {
+					var ajax = new $ax(Feng.ctxPath + "/Commentlist/delete", function (data) {
+						if ('00' === data.status) {
+							Feng.success(data.msg,1000);
+							CodeGoods.table.refresh();
+						} else {
+							Feng.error(data.msg,1000);
+						}
+					});
+					ajax.set('id', idx);
+					ajax.start();
+				});
+			}
+		}
+	}
+
+
+	CodeGoods.view = function (value) {
+		if(value){
+			var index = layer.open({type: 2,title: '查看详情',area: ['800px', '100%'],fix: false, maxmin: true,content: Feng.ctxPath + '/Commentlist/view?id='+value});
+			if(!IsPC()){layer.full(index)}
+		}else{
+			if (this.check()) {
+				var idx = '';
+				$.each(CodeGoods.seItem, function() {
+					idx += ',' + this.id;
+				});
+				idx = idx.substr(1);
+				if(idx.indexOf(",") !== -1){
+					Feng.info("请选择单条数据！");
+					return false;
+				}
+				var index = layer.open({type: 2,title: '查看详情',area: ['800px', '100%'],fix: false, maxmin: true,content: Feng.ctxPath + '/Commentlist/view?id='+idx});
+				this.layerIndex = index;
+				if(!IsPC()){layer.full(index)}
+			}
+		}
+	}
+
+
+	CodeGoods.search = function() {
+		CodeGoods.table.refresh({query : CodeGoods.formParams()});
+	};
+
+	$(function() {
+		var defaultColunms = CodeGoods.initColumn();
+		var url = location.search;
+		var table = new BSTable(CodeGoods.id, Feng.ctxPath+"/Commentlist/index"+url,defaultColunms,20);
+		table.setPaginationType("server");
+		table.setQueryParams(CodeGoods.formParams());
+		CodeGoods.table = table.init();
+	});
+</script>
+{/block}

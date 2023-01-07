@@ -1,0 +1,127 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+<input type="hidden" name='id' id='id' value="{$info.id}" />
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">组别ID：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="group_id" value="{$info.group_id}" name="group_id" class="form-control" placeholder="请输入组别ID">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">用户名：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="username" value="{$info.username}" name="username" class="form-control" placeholder="请输入用户名">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">密码：</label>
+						<div class="col-sm-9">
+							<input type="password" id="password" value="{$info.password}" name="password" class="form-control" placeholder="请输入密码">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">电子邮箱：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="email" value="{$info.email}" name="email" class="form-control" placeholder="请输入电子邮箱">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">创建时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" value="{if condition="$info.createtime neq ''"}{$info.createtime|date='Y-m-d H:i:s'}{/if}" name="createtime"  placeholder="请输入创建时间" class="form-control" id="createtime">
+						</div>
+					</div>
+					<div class="form-group layui-form">
+						<label class="col-sm-2 control-label">状态正常|0|success,禁用|1|danger：</label>
+						<div class="col-sm-9">
+							<?php if(!isset($info['status'])){ $info['status'] = '0'; }; ?>
+							<input name="status" value="0" type="radio" {if condition="$info.status eq '0'"}checked{/if} title="正常">
+							<input name="status" value="1" type="radio" {if condition="$info.status eq '1'"}checked{/if} title="禁用">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">手机号：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="phone" value="{$info.phone}" name="phone" class="form-control" placeholder="请输入手机号">
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.update()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<script>
+layui.use(['form'],function(){});
+laydate.render({elem: '#createtime',type: 'datetime',trigger:'click'});
+laydate.render({elem: '#updatetime',type: 'datetime',trigger:'click'});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+		email: {
+			validators: {
+				regexp: {
+					regexp: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/,
+					message: ''
+	 			},
+	 		}
+	 	},
+		phone: {
+			validators: {
+				regexp: {
+					regexp: /^1[3456789]\d{9}$/,
+					message: ''
+	 			},
+	 		}
+	 	},
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('id').set('group_id').set('username').set('password').set('email').set('createtime').set('updatetime').set('phone');
+};
+
+CodeInfoDlg.update = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var status = $("input[name = 'status']:checked").val();
+	 var ajax = new $ax(Feng.ctxPath + "/Apiuser/update", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set('status',status);
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

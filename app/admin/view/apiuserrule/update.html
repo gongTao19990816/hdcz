@@ -1,0 +1,121 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+<input type="hidden" name='id' id='id' value="{$info.id}" />
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">父ID：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="pid" value="{$info.pid}" name="pid" class="form-control" placeholder="请输入父ID">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">名称：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="name" value="{$info.name}" name="name" class="form-control" placeholder="请输入名称">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">标题：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="title" value="{$info.title}" name="title" class="form-control" placeholder="请输入标题">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="remark" value="{$info.remark}" name="remark" class="form-control" placeholder="请输入备注">
+						</div>
+					</div>
+					<div class="form-group layui-form">
+						<label class="col-sm-2 control-label">是否菜单开启|1,关闭|0：</label>
+						<div class="col-sm-9">
+							<?php if(!isset($info['ismenu'])){ $info['ismenu'] = '1'; }; ?>
+							<input name="ismenu" value="1" type="radio" {if condition="$info.ismenu eq '1'"}checked{/if} title="开启">
+							<input name="ismenu" value="0" type="radio" {if condition="$info.ismenu eq '0'"}checked{/if} title="关闭">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">创建时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" value="{if condition="$info.createtime neq ''"}{$info.createtime|date='Y-m-d H:i:s'}{/if}" name="createtime"  placeholder="请输入创建时间" class="form-control" id="createtime">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">权重：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" id="weigh" value="{$info.weigh}" name="weigh" class="form-control" placeholder="请输入权重">
+						</div>
+					</div>
+					<div class="form-group layui-form">
+						<label class="col-sm-2 control-label">状态正常|1|success,禁用|0|danger：</label>
+						<div class="col-sm-9">
+							<?php if(!isset($info['status'])){ $info['status'] = 1; }; ?>
+							<input name="status" value="1" type="radio" {if condition="$info.status eq '1'"}checked{/if} title="正常">
+							<input name="status" value="0" type="radio" {if condition="$info.status eq '0'"}checked{/if} title="禁用">
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.update()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<script>
+layui.use(['form'],function(){});
+laydate.render({elem: '#createtime',type: 'datetime',trigger:'click'});
+laydate.render({elem: '#updatetime',type: 'datetime',trigger:'click'});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('id').set('pid').set('name').set('title').set('remark').set('createtime').set('updatetime').set('weigh');
+};
+
+CodeInfoDlg.update = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var ismenu = $("input[name = 'ismenu']:checked").val();
+	 var status = $("input[name = 'status']:checked").val();
+	 var ajax = new $ax(Feng.ctxPath + "/Apiuserrule/update", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set('ismenu',ismenu);
+	 ajax.set('status',status);
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}

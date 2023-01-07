@@ -1,0 +1,106 @@
+{extend name='common/_container'}
+{block name="content"}
+<div class="ibox float-e-margins">
+<input type="hidden" name='material_id' id='material_id' value="{$info.material_id}" />
+	<div class="ibox-content">
+		<div class="form-horizontal" id="CodeInfoForm">
+			<div class="row">
+				<div class="col-sm-12">
+				<!-- form start -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">封面图片：</label>
+						<div class="col-sm-6">
+							<input type="text" autocomplete="off" id="pic" value="{$info.pic}" {if condition="config('my.img_show_status') eq true"}onmousemove="showBigPic(this.value)" onmouseout="closeimg()"{/if} name="pic" class="form-control" placeholder="请输入封面图片">
+							<span class="help-block m-b-none pic_process"></span>
+						</div>
+						<div class="col-sm-2" style="position:relative; right:30px;">
+							<span id="pic_upload"></span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">上传时间：</label>
+						<div class="col-sm-9">
+							<input type="text" autocomplete="off" value="{if condition="$info.add_time neq ''"}{$info.add_time|date='Y-m-d H:i:s'}{/if}" name="add_time"  placeholder="请输入上传时间" class="form-control" id="add_time">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">视频类型：</label>
+						<div class="col-sm-9">
+							<select lay-ignore name="typecontrol_id" class="form-control chosen" data-placeholder='请选择视频类型'  id="typecontrol_id">
+								<option value="">请选择</option>
+								{sql connect="mysql" query="select typecontrol_id,type_title from tt_typecontrol"}
+									<option value="{$sql.typecontrol_id}" {if condition="$info.typecontrol_id eq $sql.typecontrol_id"}selected{/if}>{$sql.type_title}</option>
+								{/sql}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">视频地址：</label>
+						<div class="col-sm-6">
+							<input type="text" autocomplete="off" id="video_url" value="{$info.video_url}" name="video_url" class="form-control" placeholder="请输入视频地址">
+							<span class="help-block m-b-none video_url_process"></span>
+						</div>
+						<div class="col-sm-3" style="position:relative; right:30px;">
+							<span id="video_url_upload"></span>
+						</div>
+					</div>
+				<!-- form end -->
+				</div>
+			</div>
+			<div class="hr-line-dashed"></div>
+			<div class="row btn-group-m-t">
+				<div class="col-sm-9 col-sm-offset-1">
+					<button type="button" class="btn btn-primary" onclick="CodeInfoDlg.update()" id="ensure">
+						<i class="fa fa-check"></i>&nbsp;确认提交
+					</button>
+					<button type="button" class="btn btn-danger" onclick="CodeInfoDlg.close()" id="cancel">
+						<i class="fa fa-eraser"></i>&nbsp;取消
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/static/js/upload.js" charset="utf-8"></script>
+<script src="__PUBLIC__/static/js/plugins/layui/layui.js" charset="utf-8"></script>
+<link href='__PUBLIC__/static/js/plugins/chosen/chosen.min.css' rel='stylesheet'/>
+<script src='__PUBLIC__/static/js/plugins/chosen/chosen.jquery.js'></script>
+<script>
+layui.use(['form'],function(){});
+uploader('pic_upload','pic','image',false,'','{:getUploadServerUrl()}');
+uploader('video_url_upload','video_url','file',false,'','{:getUploadServerUrl()}');
+$(function(){$('.chosen').chosen({search_contains: true})})
+laydate.render({elem: '#add_time',type: 'datetime',trigger:'click'});
+var CodeInfoDlg = {
+	CodeInfoData: {},
+	validateFields: {
+	 }
+}
+
+CodeInfoDlg.collectData = function () {
+	this.set('material_id').set('pic').set('add_time').set('typecontrol_id').set('video_url');
+};
+
+CodeInfoDlg.update = function () {
+	 this.clearData();
+	 this.collectData();
+	 if (!this.validate()) {
+	 	return;
+	 }
+	 var ajax = new $ax(Feng.ctxPath + "/Material/update", function (data) {
+	 	if ('00' === data.status) {
+	 		Feng.success(data.msg,1000);
+	 		window.parent.CodeGoods.table.refresh();
+	 		CodeInfoDlg.close();
+	 	} else {
+	 		Feng.error(data.msg + "！",1000);
+		 }
+	 })
+	 ajax.set(this.CodeInfoData);
+	 ajax.start();
+};
+
+
+</script>
+<script src="__PUBLIC__/static/js/base.js" charset="utf-8"></script>
+{/block}
