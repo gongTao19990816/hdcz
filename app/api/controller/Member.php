@@ -150,6 +150,7 @@ class Member extends Common
         return $this->ajaxReturn($this->successCode, '返回成功', htmlOutList($res));
     }
 
+
     //用户单独上传视频
     function UserPushVideo()
     {
