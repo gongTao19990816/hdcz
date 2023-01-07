@@ -127,35 +127,26 @@ class Member extends Common
 
 
     function MemberList()
-    {
-        if (!$this->request->isPost()) {
-            throw new ValidateException('请求错误');
-        }
-//        $limit = $this->request->post('limit', 20, 'intval');
-//        $page = $this->request->post('page', 1, 'intval');
-//        $where = [];
-//        $where['uid'] = $this->request->post('uid', '', 'serach_in');
-//        $where['grouping_id'] = $this->request->post('grouping_id', '', 'serach_in');
-//        $where['typecontrol_id'] = $this->request->post('typecontrol_id', '', 'serach_in');
-//        $where['status'] = 1;
-//        $where['del'] = 1;
-//        // $where['api_user_id'] = $this->request->uid;
-//        $max = $this->request->post('max');
-//        $min = $this->request->post('min');
-//        $where['follower_status'] = ['between', [$min, $max]];
-        $field = '*';
-//        $order = $this->request->post('order', '', 'serach_in');
-//        $sort = $this->request->post('sort', '', 'serach_in');
-//        $orderby = ($order && $sort) ? $order . ' ' . $sort : 'status desc';
+    { if (!$this->request->isPost()) {
+        throw new ValidateException('请求错误');
+    }
+        $limit = $this->request->post('limit', 20, 'intval');
+        $page = $this->request->post('page', 1, 'intval');
+        $where = [];
+        $where['grouping_id'] = $this->request->post('grouping_id', '', 'serach_in');
+        $where['typecontrol_id'] = $this->request->post('typecontrol_id', '', 'serach_in');
+        $where['del'] = 1;
+        $where['status'] = 1;
+        $orderby = 'member_id desc';
 
-        $res = MemberModel::where('status',1)->field($field)->select()->toArray();
+        $res = MemberService::indexList($this->apiFormatWhere($where, MemberModel::class), $field, $orderby, $limit, $page);
         foreach ($res['list'] as &$row) {
             $row['grouping_name'] = db('grouping')->where('grouping_id', $row['grouping_id'])->value('grouping_name');
             $row['type_title'] = db('typecontrol')->where('typecontrol_id', $row['typecontrol_id'])->value('type_title');
+            // $row['pro_type'] = '项目分类';
+            $row['updata_time'] = date("Y-m-d H:i:s", $row['updata_time']);
         }
 
-        // $res['ifup'] = MemberModel::where('ifup',1)->count();
-        // $this->UpMemberTime();
         return $this->ajaxReturn($this->successCode, '返回成功', htmlOutList($res));
     }
 
