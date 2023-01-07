@@ -17,7 +17,7 @@ return [
             'type' => 'Redis',
             'host' => '127.0.0.1',
             'port' => 6379,
-            'password' => '123456lh',
+            'password' => '147258lh',
         ],
         'file' => [
             // 驱动方式
