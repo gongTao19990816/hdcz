@@ -139,7 +139,7 @@ class Member extends Common
         $where['status'] = 1;
         $orderby = 'member_id desc';
 
-        $res = MemberService::indexList($this->apiFormatWhere($where, MemberModel::class), $field, $orderby, $limit, $page);
+        $res = MemberService::indexList($this->apiFormatWhere($where), $field, $orderby, $limit, $page);
         foreach ($res['list'] as &$row) {
             $row['grouping_name'] = db('grouping')->where('grouping_id', $row['grouping_id'])->value('grouping_name');
             $row['type_title'] = db('typecontrol')->where('typecontrol_id', $row['typecontrol_id'])->value('type_title');
