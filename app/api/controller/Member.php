@@ -816,20 +816,18 @@ class Member extends Common
     {
         $where['typecontrol_id'] = $typecontrol_id;
         $where['status'] = 1;
-        $updata['status'] = 0;
-        $updata['usage_time'] = time();
         if ($type == 1) {
-            $res = db('nickname')->where($where)->orderRaw('rand()')->limit(1)->select()->toArray();
+            $res = db('nickname')->where($where)->order('usage_count asc')->limit(1)->select()->toArray();
             $data = $res[0]['nickname'];
-            db('nickname')->where('nickname_id', $res[0]['nickname_id'])->update($updata);
+            db('nickname')->where('nickname_id', $res[0]['nickname_id'])->inc('usage_count')->update();
         } elseif ($type == 2) {
-            $res = db('autograph')->where($where)->orderRaw('rand()')->limit(1)->select()->toArray();
+            $res = db('autograph')->where($where)->order('usage_count asc')->limit(1)->select()->toArray();
             $data = $res[0]['autograph'];
-            db('autograph')->where('autograph_id', $res[0]['autograph_id'])->update($updata);
+            db('autograph')->where('autograph_id', $res[0]['autograph_id'])->inc('usage_count')->update();
         } elseif ($type == 3) {
-            $res = db('headimage')->where($where)->orderRaw('rand()')->limit(1)->select()->toArray();
+            $res = db('headimage')->where($where)->order('usage_count asc')->limit(1)->select()->toArray();
             $data = config('my.host_url') . $res[0]['image'];
-            db('headimage')->where('headimage_id', $res[0]['headimage_id'])->update($updata);
+            db('headimage')->where('headimage_id', $res[0]['headimage_id'])->inc('usage_count')->update();
         }
         return $data;
     }
