@@ -768,17 +768,17 @@ class Member extends Common
         $nickname = $params['nickname'];
         $avatar_thumb  = $params['avatar_thumb '];
         $signature= $params['signature'];
-        if(empty($uid_list) || (empty($old_typecontrol_id) && empty($old_grouping_id))){
+        if(empty($uid_list) && (empty($old_typecontrol_id) && empty($old_grouping_id))){
             throw new ValidateException('uidlist和分组分类二选一必传');
         }
         if($uid_list && (empty($old_typecontrol_id) && empty($old_grouping_id))){
-            $where['uid'] = ['in' ,$uid_list]
+            $where['uid'] = ['in' ,$uid_list];
         }
         if($old_typecontrol_id && $old_grouping_id){
             $where['typecontrol_id'] = $old_typecontrol_id;
             $where['grouping_id'] = $old_grouping_id;
         }
-        if(empty($typecontrol_id) || empty($grouping_id) || empty($nickname) || empty($avatar_thumb) || empty($signature)){
+        if(empty($typecontrol_id) && empty($grouping_id) && empty($nickname) && empty($avatar_thumb) && empty($signature)){
             throw new ValidateException('要修改项不能低于一种');
         }
         $members = db('member')->where($where)->field('uid,token')->select()->toArray();
@@ -806,7 +806,6 @@ class Member extends Common
             }
 
         }
-
 
     }
     function BatchUpdateUserData()
