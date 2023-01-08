@@ -757,7 +757,11 @@ class Member extends Common
         // var_dump($arr);die;
     }
 
+    function BatchUpdateUserDatas(){
+        $params = $this->request->post();
+        $task_type = "BatchUpdateUserData";
 
+    }
     function BatchUpdateUserData()
     {
         $idx = $this->request->post('member_id');

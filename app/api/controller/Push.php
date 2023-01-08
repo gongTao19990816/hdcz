@@ -72,7 +72,7 @@ class Push extends Common
 
         $comment_num = db('comment_list')
             ->where(function ($query) use ($params) {
-                $query->where('account_region', ['in', $params['country_list']]);
+                $query->where('account_region', 'in', $params['country_list']);
                 if ($params['comment_digg_count_lower_limit']) {
                     $query->where('digg_count', '<', $params['comment_digg_count_lower_limit']);
                 }
