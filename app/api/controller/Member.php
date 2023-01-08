@@ -785,26 +785,50 @@ class Member extends Common
         if($members){
             throw new ValidateException('没有账户');
         }
-        for ($i = 0; $i < 5; $i++){
-            if($typecontrol_id){
-                $updata['typecontrol_id'] = $typecontrol_id;
-            }
-            if($grouping_id){
-                $updata['grouping_id'] = $grouping_id;
-            }
-            if($nickname){
-                $adddata['type'] = "nickname";
-                $adddata['nickname'] = $this->suijisucai(1, $old_typecontrol_id);
-            }
-            if($avatar_thumb){
-                $adddata['type'] = "avatar_thumb";
-                $adddata['avatar_thumb'] = $this->suijisucai(3, $old_typecontrol_id);
-            }
-            if($signature){
-                $adddata['type'] = "signature";
-                $adddata['signature'] = $this->suijisucai(2, $old_typecontrol_id);
-            }
+        $addtask['task_name'] = '批量修改账户';
+        $addtask['task_type'] = $task_type;
+        $addtask['task_num'] = count($members);
+        $addtask['create_time'] = time();
+        $addtask['status'] = 1;
+        $usertask = db('tasklist')->insertGetId($addtask);
+        $redis = connectRedis();
+        foreach ($members as &$uid){
+            for ($i = 0; $i < 5; $i++){
+                if($typecontrol_id){
+                    $updata['typecontrol_id'] = $typecontrol_id;
+                    db('member')->where('uid',$uid['uid'])->update($updata);
+                }
+                if($grouping_id){
+                    $updata['grouping_id'] = $grouping_id;
+                    db('member')->where('uid',$uid['uid'])->update($updata);
+                }
+                if($nickname){
+                    $taskdata['type'] = "nickname";
+                    $taskdata['nickname'] = $this->suijisucai(1, $old_typecontrol_id);
 
+                }
+                if($avatar_thumb){
+                    $taskdata['type'] = "avatar_thumb";
+                    $taskdata['avatar_thumb'] = $this->suijisucai(3, $old_typecontrol_id);
+                }
+                if($signature){
+                    $taskdata['type'] = "signature";
+                    $taskdata['signature'] = $this->suijisucai(2, $old_typecontrol_id);
+                }
+
+                $adddata['parameter'] = json_encode($taskdata);
+                $adddata['create_time'] = time();
+                $adddata['task_type'] = $task_type;
+                $adddata['tasklist_id'] = $usertask;
+                $adddata['crux'] = $uid['uid'];
+                unset($adddata['tasklistdetail_id']);
+
+                $arr = db('tasklistdetail')->insertGetId($adddata);
+                $adddata['tasklistdetail_id'] = $arr;
+                $adddata['parameter'] = json_decode($adddata['parameter'],true);
+                $redis->lPush('task', json_encode($adddata));
+
+            }
         }
 
     }
