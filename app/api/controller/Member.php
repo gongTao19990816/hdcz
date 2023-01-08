@@ -757,7 +757,8 @@ class Member extends Common
         // var_dump($arr);die;
     }
 
-    function BatchUpdateUserDatas(){
+    function BatchUpdateUserDatas()
+    {
         $params = $this->request->post();
         $task_type = "BatchUpdateUserData";
         $uid_list = $params['uid_list'];//要修改的uid
@@ -766,23 +767,23 @@ class Member extends Common
         $typecontrol_id = $params['typecontrol_id']; //需要修改的新分类
         $grouping_id = $params['grouping_id'];//需要修改的新分组
         $nickname = $params['nickname'];
-        $avatar_thumb  = $params['avatar_thumb '];
-        $signature= $params['signature'];
-        if(empty($uid_list) && (empty($old_typecontrol_id) && empty($old_grouping_id))){
+        $avatar_thumb = $params['avatar_thumb '];
+        $signature = $params['signature'];
+        if (empty($uid_list) && (empty($old_typecontrol_id) && empty($old_grouping_id))) {
             throw new ValidateException('uidlist和分组分类二选一必传');
         }
-        if($uid_list && (empty($old_typecontrol_id) && empty($old_grouping_id))){
-            $where['uid'] = ['in' ,$uid_list];
+        if ($uid_list && (empty($old_typecontrol_id) && empty($old_grouping_id))) {
+            $where['uid'] = ['in', $uid_list];
         }
-        if($old_typecontrol_id && $old_grouping_id){
+        if ($old_typecontrol_id && $old_grouping_id) {
             $where['typecontrol_id'] = $old_typecontrol_id;
             $where['grouping_id'] = $old_grouping_id;
         }
-        if(empty($typecontrol_id) && empty($grouping_id) && empty($nickname) && empty($avatar_thumb) && empty($signature)){
+        if (empty($typecontrol_id) && empty($grouping_id) && empty($nickname) && empty($avatar_thumb) && empty($signature)) {
             throw new ValidateException('要修改项不能低于一种');
         }
         $members = db('member')->where($where)->field('uid,token')->select()->toArray();
-        if($members){
+        if (empty($members)) {
             throw new ValidateException('没有账户');
         }
         $addtask['task_name'] = '批量修改账户';
@@ -792,26 +793,25 @@ class Member extends Common
         $addtask['status'] = 1;
         $usertask = db('tasklist')->insertGetId($addtask);
         $redis = connectRedis();
-        foreach ($members as &$uid){
-            for ($i = 0; $i < 5; $i++){
-                if($typecontrol_id){
-                    $updata['typecontrol_id'] = $typecontrol_id;
-                    db('member')->where('uid',$uid['uid'])->update($updata);
-                }
-                if($grouping_id){
-                    $updata['grouping_id'] = $grouping_id;
-                    db('member')->where('uid',$uid['uid'])->update($updata);
-                }
-                if($nickname){
+        $details = [];
+        foreach ($members as &$uid) {
+            if ($typecontrol_id) {
+                db('member')->where('uid', $uid['uid'])->update(['typecontrol_id' => $typecontrol_id]);
+            }
+            if ($grouping_id) {
+                db('member')->where('uid', $uid['uid'])->update(['grouping_id' => $grouping_id]);
+            }
+            for ($i = 0; $i < 3; $i++) {
+                if ($i == 0 && $nickname) {
                     $taskdata['type'] = "nickname";
                     $taskdata['nickname'] = $this->suijisucai(1, $old_typecontrol_id);
 
                 }
-                if($avatar_thumb){
+                if ($i == 1 && $avatar_thumb) {
                     $taskdata['type'] = "avatar_thumb";
                     $taskdata['avatar_thumb'] = $this->suijisucai(3, $old_typecontrol_id);
                 }
-                if($signature){
+                if ($i == 2 && $signature) {
                     $taskdata['type'] = "signature";
                     $taskdata['signature'] = $this->suijisucai(2, $old_typecontrol_id);
                 }
@@ -823,15 +823,17 @@ class Member extends Common
                 $adddata['crux'] = $uid['uid'];
                 unset($adddata['tasklistdetail_id']);
 
-                $arr = db('tasklistdetail')->insertGetId($adddata);
+                $arr = \app\api\model\TaskListDetail::add($adddata);
                 $adddata['tasklistdetail_id'] = $arr;
-                $adddata['parameter'] = json_decode($adddata['parameter'],true);
-                $redis->lPush('task', json_encode($adddata));
-
+                $adddata['parameter'] = json_decode($adddata['parameter'], true);
+                $details[] = $adddata;
             }
         }
-
+        foreach ($details as $detail) {
+            $redis->lPush('task', json_encode($detail));
+        }
     }
+
     function BatchUpdateUserData()
     {
         $idx = $this->request->post('member_id');

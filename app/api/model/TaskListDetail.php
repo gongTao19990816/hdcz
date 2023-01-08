@@ -26,6 +26,9 @@ class TaskListDetail extends Model
     public static $waitCode = 5;//等执行
     public static $noStartCode = 1;//未开始
 
+    /**
+     * 添加的时候设置过期时间60秒
+    */
     static function add($taskdetaildata)
     {
         $taskdetail = new self();
