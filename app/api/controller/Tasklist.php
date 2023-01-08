@@ -107,6 +107,7 @@ class Tasklist extends Common
                     throw new \think\Exception('删除key时：' . $e->getMessage());
                 }
                 $tmp_key = 'tmp_' . $key;
+                $task->status = 2;
                 $task->tmp_redis_key = $tmp_key;
                 $task->save();
                 foreach ($rows as $row) {
@@ -167,6 +168,7 @@ class Tasklist extends Common
                 } catch (RedisException $e) {
                     throw new \think\Exception('删除key时：' . $e->getMessage());
                 }
+                $task->status = 1;
                 $task->tmp_redis_key = '';
                 $task->save();
                 foreach ($rows as $row) {
