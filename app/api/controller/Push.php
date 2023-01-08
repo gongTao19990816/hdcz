@@ -35,21 +35,6 @@ class Push extends Common
     {
         $params = $this->request->get();
 
-        //验证规则
-        $rule = [
-            'country_list' => 'require',
-        ];
-
-        //错误提示
-        $msg = [
-            'country_list.require' => '国家必传',
-        ];
-        //调用验证器
-        $validate = Validate::rule($rule)->message($msg);
-        if (!$validate->check($params)) {
-            throw new ValidateException($validate->getError());
-        }
-
         $external_member_num = db('external_member')->where(function ($query) use ($params) {
             if ($params['reset_status']) {
                 $query->where("if_chat", 0);
@@ -84,27 +69,6 @@ class Push extends Common
     function screen_comment_digg()
     {
         $params = $this->request->get();
-
-        //验证规则
-        $rule = [
-            'grouping_id' => 'require',
-            'typecronl_id' => 'require',
-            'country_list' => 'require',
-            'tasklist_id_list' => 'require',
-        ];
-
-        //错误提示
-        $msg = [
-            'grouping_id.require' => '分组id必传',
-            'typecronl_id.require' => '分组id必传',
-            'country_list.require' => '国家必传',
-            'tasklist_id_list.require' => 'tasklist_id_list（数据来源（采集任务ID））必传',
-        ];
-        //调用验证器
-        $validate = Validate::rule($rule)->message($msg);
-        if (!$validate->check($params)) {
-            throw new ValidateException($validate->getError());
-        }
 
         $comment_num = db('comment_list')
             ->where(function ($query) use ($params) {
@@ -150,29 +114,6 @@ class Push extends Common
     function screen_follow()
     {
         $params = $this->request->get();
-
-        //验证规则
-        $rule = [
-            'grouping_id' => 'require',
-            'typecronl_id' => 'require',
-            'country_list' => 'require',
-            'tasklist_id_list' => 'require',
-            'user_follow_upper_limit' => 'require',
-        ];
-
-        //错误提示
-        $msg = [
-            'grouping_id.require' => '分组id必传',
-            'typecronl_id.require' => '分组id必传',
-            'country_list.require' => '国家必传',
-            'tasklist_id_list.require' => 'tasklist_id_list（数据来源（采集任务ID））必传',
-            'user_follow_upper_limit.require' => 'user_follow_upper_limit（单号关注上限）必传',
-        ];
-        //调用验证器
-        $validate = Validate::rule($rule)->message($msg);
-        if (!$validate->check($params)) {
-            throw new ValidateException($validate->getError());
-        }
 
         if ($params['black_list']) {
             $black_list = $params['black_list'];
