@@ -12,17 +12,6 @@ use think\facade\Validate;
  */
 class Push extends Common
 {
-    function getTaskProgress()
-    {
-        $taskId = $this->request->get("tasklist_id/n");
-        if (!$taskId) {
-            throw new ValidateException("请传递任务ID");
-        }
-        $taskNum = db("tasklist")->where("tasklist_id", $taskId)->value("task_num");
-        $taskDetailNum = db("tasklistdetail")->where("tasklist_id", $taskId)->count();
-        $progress = $taskDetailNum && $taskNum ? round(($taskDetailNum * 100) / $taskNum, 2) : 0;
-        return $this->ajaxReturn($this->successCode, "获取任务创建进度成功", $progress);
-    }
 
     /**
      * @api {get} /Push/screen_chat 02、获取私信任务筛选后的用户数量
@@ -304,7 +293,7 @@ class Push extends Common
             'api_user_id' => $this->request->uid
         ];
         $task_id = db("tasklist")->insertGetId($task);
-        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/getTaskProgress'查询创建进度", "data" => ['task_id' => $task_id]]);
+        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
         //操作用户查询
         $members = db('member')->where('uid', 'in', $params['uid_list'])->field('uid,sec_uid,unique_id,token')->select()->toArray();
@@ -495,7 +484,7 @@ class Push extends Common
             'api_user_id' => $this->request->uid
         ];
         $task_id = db("tasklist")->insertGetId($task);
-        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/getTaskProgress'查询创建进度", "data" => ['task_id' => $task_id]]);
+        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
 
         unset($member);
@@ -632,7 +621,7 @@ class Push extends Common
             'api_user_id' => $this->request->uid
         ];
         $task_id = db("tasklist")->insertGetId($task);
-        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/getTaskProgress'查询创建进度", "data" => ['task_id' => $task_id]]);
+        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
         $redis = connectRedis();
         $task_details = [];
@@ -748,7 +737,7 @@ class Push extends Common
             "complete_num" => 0
         ];
         $task_id = db("tasklist")->insertGetId($task);
-        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/getTaskProgress'查询创建进度", "data" => ['task_id' => $task_id]]);
+        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
         $redis = connectRedis();
         $task_details = [];

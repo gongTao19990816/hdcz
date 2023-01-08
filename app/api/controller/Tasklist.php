@@ -58,10 +58,66 @@ class Tasklist extends Common
         $orderby = 'tasklist_id desc';
 
         $res = TasklistService::indexList($this->apiFormatWhere($where), $field, $orderby, $limit, $page);
-        foreach ($res['list'] as &$row){
-            $row['create_time '] = date("Y-m-d H:i:s",$row['create_time']);
+        foreach ($res['list'] as &$row) {
+            $row['create_time '] = date("Y-m-d H:i:s", $row['create_time']);
         }
         return $this->ajaxReturn($this->successCode, '返回成功', htmlOutList($res));
+    }
+
+    /**
+     * @api {get} /tasklist/get_exec_progress 01、获取任务执行进度
+     * @apiGroup tasklist
+     * @apiVersion 1.0.0
+     * @apiDescription  获取任务执行进度
+     * @apiParam (输入参数：) {int}              [tasklist_id] 任务ID
+     * @apiParam (失败返回参数：) {object}        array 返回结果集
+     * @apiParam (失败返回参数：) {string}        array.status 返回错误码 201
+     * @apiParam (失败返回参数：) {string}        array.msg 返回错误消息
+     * @apiParam (成功返回参数：) {string}        array 返回结果集
+     * @apiParam (成功返回参数：) {string}        array.status 返回错误码 200
+     * @apiParam (成功返回参数：) {string}        array.data 返回数量
+     * @apiSuccessExample {json} 01 成功示例
+     * {"status":"200","mas":"获取任务执行进度","data":{"now":1,"total":10}}
+     * @apiErrorExample {json} 02 失败示例
+     * {"status":" 201","msg":"查询失败"}
+     */
+    function get_exec_progress()
+    {
+        $taskId = $this->request->get("tasklist_id/n");
+        if (!$taskId) {
+            throw new ValidateException("请传递任务ID");
+        }
+        $taskNums = db("tasklist")->where("tasklist_id", $taskId)->field("task_num,complete_num,fail_num");
+        return $this->ajaxReturn($this->successCode, "获取任务创建进度成功", ['now' => $taskNums['fail_num'] + $taskNums['complete_num'], 'total' => $taskNums['task_num']]);
+    }
+
+    /**
+     * @api {get} /tasklist/get_create_progress 01、获取任务创建进度
+     * @apiGroup tasklist
+     * @apiVersion 1.0.0
+     * @apiDescription  获取任务创建进度
+     * @apiParam (输入参数：) {int}              [tasklist_id] 任务ID
+     * @apiParam (失败返回参数：) {object}        array 返回结果集
+     * @apiParam (失败返回参数：) {string}        array.status 返回错误码 201
+     * @apiParam (失败返回参数：) {string}        array.msg 返回错误消息
+     * @apiParam (成功返回参数：) {string}        array 返回结果集
+     * @apiParam (成功返回参数：) {string}        array.status 返回错误码 200
+     * @apiParam (成功返回参数：) {string}        array.data 返回数量
+     * @apiSuccessExample {json} 01 成功示例
+     * {"status":"200","mas":"获取任务创建进度成功","data":{"now":1,"total":10}}
+     * @apiErrorExample {json} 02 失败示例
+     * {"status":" 201","msg":"查询失败"}
+     */
+    function get_task_create_progress()
+    {
+        $taskId = $this->request->get("tasklist_id/n");
+        if (!$taskId) {
+            throw new ValidateException("请传递任务ID");
+        }
+        $taskNum = db("tasklist")->where("tasklist_id", $taskId)->value("task_num");
+        $taskDetailNum = db("tasklistdetail")->where("tasklist_id", $taskId)->count();
+        //$progress = $taskDetailNum && $taskNum ? round(($taskDetailNum * 100) / $taskNum, 2) : 0;
+        return $this->ajaxReturn($this->successCode, "获取任务创建进度成功", ['now' => $taskDetailNum, 'total' => $taskNum]);
     }
 
     /**

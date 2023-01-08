@@ -127,9 +127,10 @@ class Member extends Common
 
 
     function MemberList()
-    { if (!$this->request->isPost()) {
-        throw new ValidateException('请求错误');
-    }
+    {
+        if (!$this->request->isPost()) {
+            throw new ValidateException('请求错误');
+        }
         $limit = $this->request->post('limit', 20, 'intval');
         $page = $this->request->post('page', 1, 'intval');
         $where = [];
@@ -203,14 +204,17 @@ class Member extends Common
     }
 
 
-    function chaaxun(){
+    function chaaxun()
+    {
         // $where['typecontrol_id'] = 3;
         // $where['grouping_id'] = 3;
         // $where['status'] = 1;
         // var_dump($where);die;
-        $arr = db('member')->where(['typecontrol_id'=>3,'grouping_id'=>3])->field('token,uid')->select();
-        var_dump(count($arr));die;
+        $arr = db('member')->where(['typecontrol_id' => 3, 'grouping_id' => 3])->field('token,uid')->select();
+        var_dump(count($arr));
+        die;
     }
+
     /**
      * @api {post} /Member/refresh_update 手动更新分组分类下的账号数据
      * @apiGroup Member
@@ -274,9 +278,9 @@ class Member extends Common
             "status" => 1,
             "complete_num" => 0
         ];
-        Cache::set('last_refresh_update_data', ['grouping_id' => $where['grouping_id'], 'typecontrol_id' => $where['typecontrol_id'], 'create_time' => time()], 1 * 60 * 60);
         $task_id = db("tasklist")->insertGetId($task);
-        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/getTaskProgress'查询创建进度", "data" => ['task_id' => $task_id]]);
+        Cache::set('last_refresh_update_data', ['grouping_id' => $where['grouping_id'], 'typecontrol_id' => $where['typecontrol_id'], 'create_time' => time(), 'task_id' => $task_id], 1 * 60 * 60);
+        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
         $task_details = [];
         $redis = connectRedis();
