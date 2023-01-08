@@ -46,7 +46,7 @@ class Push extends Common
     }
 
     /**
-     * @api {get} /Commentlist/screen_comment_digg 02、获取评论任务筛选后的评论数量
+     * @api {get} /Push/screen_comment_digg 02、获取评论任务筛选后的评论数量
      * @apiGroup Commentlist
      * @apiVersion 1.0.0
      * @apiDescription  获取评论任务筛选后的评论数量
