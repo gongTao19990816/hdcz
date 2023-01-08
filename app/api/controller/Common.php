@@ -360,7 +360,7 @@ class Common
     protected function ajaxReturn($status, $msg, $data = '', $token = '')
     {
         $res = ['status' => $status, 'msg' => $msg];
-        !empty($data) && $res['data'] = $data;
+        $res['data'] = $data;
         !empty($token) && $res['token'] = $token;
         return json($res);
     }

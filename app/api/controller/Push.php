@@ -128,8 +128,13 @@ class Push extends Common
                 'tasklist_id' => ['in', $params['tasklist_id_list']],
             ])
             ->field("cid,aweme_id")->count();
+        if($comment_num){
+            $num = $comment_num;
+        }else{
+            $num = 0;
+        }
 
-        return $this->ajaxReturn($this->successCode, '返回成功', $comment_num);
+        return $this->ajaxReturn($this->successCode, '返回成功', $num);
     }
 
     /**
@@ -684,7 +689,7 @@ class Push extends Common
             'typecontrol_id' => 'require',
             'video_num' => 'require',
             'grouping_id' => 'require',
-            'task_namme' => 'require',
+            'task_namme' => 'require'
         ];
 
         //错误提示
