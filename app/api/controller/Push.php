@@ -30,7 +30,7 @@ class Push extends Common
      * @apiVersion 1.0.0
      * @apiDescription  获取私信任务筛选后的用户数量
      * @apiParam (输入参数：) {int}              [reset_status] 重置粉丝状态
-     * @apiParam (输入参数：) {string}           [country] 国家
+     * @apiParam (输入参数：) {string}           [country_list] 国家
      * @apiParam (失败返回参数：) {object}        array 返回结果集
      * @apiParam (失败返回参数：) {string}        array.status 返回错误码 201
      * @apiParam (失败返回参数：) {string}        array.msg 返回错误消息
@@ -48,12 +48,12 @@ class Push extends Common
 
         //验证规则
         $rule = [
-            'country' => 'require',
+            'country_list' => 'require',
         ];
 
         //错误提示
         $msg = [
-            'country.require' => '国家必传',
+            'country_list.require' => '国家必传',
         ];
         //调用验证器
         $validate = Validate::rule($rule)->message($msg);
@@ -65,7 +65,7 @@ class Push extends Common
             if ($params['reset_status']) {
                 $query->where("if_chat", 0);
             }
-            $query->where('country', $params['country']);
+            $query->where('country', 'in', $params['country_list']);
         })->field("uid,sec_uid")->select()->toArray();
 
         return $this->ajaxReturn($this->successCode, '返回成功', $external_member_num);
@@ -78,7 +78,7 @@ class Push extends Common
      * @apiDescription  获取评论任务筛选后的评论数量
      * @apiParam (输入参数：) {int}              [grouping_id] 分组ID
      * @apiParam (输入参数：) {int}              [typecronl_id] 分类ID
-     * @apiParam (输入参数：) {string}           [country] 国家
+     * @apiParam (输入参数：) {string}           [country_list] 国家
      * @apiParam (输入参数：) {array}            [tasklist_id_list] 数据来源ID列表
      * @apiParam (输入参数：) {int}              [comment_digg_count_lower_limit] 评论获赞小于
      * @apiParam (失败返回参数：) {object}        array 返回结果集
@@ -100,7 +100,7 @@ class Push extends Common
         $rule = [
             'grouping_id' => 'require',
             'typecronl_id' => 'require',
-            'country' => 'require',
+            'country_list' => 'require',
             'tasklist_id_list' => 'require',
         ];
 
@@ -108,7 +108,7 @@ class Push extends Common
         $msg = [
             'grouping_id.require' => '分组id必传',
             'typecronl_id.require' => '分组id必传',
-            'country.require' => '国家必传',
+            'country_list.require' => '国家必传',
             'tasklist_id_list.require' => 'tasklist_id_list（数据来源（采集任务ID））必传',
         ];
         //调用验证器
@@ -119,7 +119,7 @@ class Push extends Common
 
         $comment_num = db('comment_list')
             ->where(function ($query) use ($params) {
-                $query->where('account_region', $params['country']);
+                $query->where('account_region', ['in', $params['country_list']]);
                 if ($params['comment_digg_count_lower_limit']) {
                     $query->where('digg_count', '<', $params['comment_digg_count_lower_limit']);
                 }
@@ -139,7 +139,7 @@ class Push extends Common
      * @apiDescription  获取关注任务筛选后的用户数量
      * @apiParam (输入参数：) {int}              [grouping_id] 分组ID
      * @apiParam (输入参数：) {int}              [typecronl_id] 分类ID
-     * @apiParam (输入参数：) {string}           [country] 国家
+     * @apiParam (输入参数：) {string}           [country_list] 国家
      * @apiParam (输入参数：) {array}            [tasklist_id_list] 数据来源ID列表
      * @apiParam (输入参数：) {int}              [user_follow_upper_limit] 单号关注上限
      * @apiParam (失败返回参数：) {object}        array 返回结果集
@@ -161,7 +161,7 @@ class Push extends Common
         $rule = [
             'grouping_id' => 'require',
             'typecronl_id' => 'require',
-            'country' => 'require',
+            'country_list' => 'require',
             'tasklist_id_list' => 'require',
             'user_follow_upper_limit' => 'require',
         ];
@@ -170,7 +170,7 @@ class Push extends Common
         $msg = [
             'grouping_id.require' => '分组id必传',
             'typecronl_id.require' => '分组id必传',
-            'country.require' => '国家必传',
+            'country_list.require' => '国家必传',
             'tasklist_id_list.require' => 'tasklist_id_list（数据来源（采集任务ID））必传',
             'user_follow_upper_limit.require' => 'user_follow_upper_limit（单号关注上限）必传',
         ];
@@ -187,7 +187,7 @@ class Push extends Common
             }
         }
 
-        $external_member_num = ExternalmemberModel::where(['country' => $params['country'], 'secret' => 0])
+        $external_member_num = ExternalmemberModel::where(['country' => ['in', $params['country_list']], 'secret' => 0])
             ->where(function ($query) use ($params) {
                 if ($params['follower_status']) $query->where('follower_status', '<', $params['follower_status']);
                 if ($params['following_count']) $query->where('following_count', '<', $params['following_count']);
@@ -219,7 +219,7 @@ class Push extends Common
      * @apiDescription  发布评论点赞任务
      * @apiParam (输入参数：) {int}              [grouping_id] 分组ID
      * @apiParam (输入参数：) {int}              [typecronl_id] 分类ID
-     * @apiParam (输入参数：) {string}           [country] 国家
+     * @apiParam (输入参数：) {string}           [country_list] 国家
      * @apiParam (输入参数：) {array}            [tasklist_id_list] 数据来源ID列表
      * @apiParam (输入参数：) {int}              [user_chat_upper_limit] 单号私信上限
      * @apiParam (输入参数：) {int}              [can_fail_num] 连续失败次数
@@ -247,7 +247,7 @@ class Push extends Common
         $rule = [
             'grouping_id' => 'require',
             'typecronl_id' => 'require',
-            'country' => 'require',
+            'country_list' => 'require',
             'tasklist_id_list' => 'require',
             'user_chat_upper_limit' => 'require',
             'total_task_num' => '',
@@ -260,7 +260,7 @@ class Push extends Common
         //错误提示
         $msg = [
             'type_list.require' => 'type_list（私信类型）必传',
-            'country.require' => 'account_region（国家）必传',
+            'country_list.require' => '国家必传',
             'user_chat_upper_limit.require' => 'user_chat_upper_limit（单号私信上限）必传',
             'total_task_num.require' => 'total_task_num（总私信上限）必传',
             'reset_status.require' => 'reset_status（重置粉丝状态）必传',
@@ -308,7 +308,7 @@ class Push extends Common
             if ($params['reset_status']) {
                 $query->where("if_chat", 0);
             }
-            $query->where('country', $params['country']);
+            $query->where('country', 'in', $params['country_list']);
         })->field("uid,sec_uid")->select()->toArray();
         $redis = connectRedis();
         $task_details = [];
@@ -377,7 +377,7 @@ class Push extends Common
      * @apiDescription  发布关注任务
      * @apiParam (输入参数：) {int}              [grouping_id] 分组ID
      * @apiParam (输入参数：) {int}              [typecronl_id] 分类ID
-     * @apiParam (输入参数：) {string}           [country] 国家
+     * @apiParam (输入参数：) {string}           [country_list] 国家
      * @apiParam (输入参数：) {array}            [tasklist_id_list] 数据来源ID列表
      * @apiParam (输入参数：) {int}              [user_follow_upper_limit] 单号关注上限
      * @apiParam (输入参数：) {int}              [rate_min] 频率最小
@@ -404,7 +404,7 @@ class Push extends Common
         $rule = [
             'grouping_id' => 'require',
             'typecronl_id' => 'require',
-            'country' => 'require',
+            'country_list' => 'require',
             'tasklist_id_list' => 'require',
             'user_follow_upper_limit' => 'require',
             'rate_min' => 'require',
@@ -417,7 +417,7 @@ class Push extends Common
         $msg = [
             'grouping_id.require' => '分组id必传',
             'typecronl_id.require' => '分组id必传',
-            'country.require' => '国家必传',
+            'country_list.require' => '国家必传',
             'tasklist_id_list.require' => 'tasklist_id_list（数据来源（采集任务ID））必传',
             'user_follow_upper_limit.require' => 'user_follow_upper_limit（单号关注上限）必传',
             'rate_min.require' => 'rate_min（关注频率最小值）必传',
@@ -451,7 +451,7 @@ class Push extends Common
             }
             $total_task_num += $member_task_num;
         }
-        $external_members = ExternalmemberModel::where(['country' => $params['country'], 'secret' => 0])
+        $external_members = ExternalmemberModel::where(['secret' => 0])
             ->where(function ($query) use ($params) {
                 if ($params['follower_status']) $query->where('follower_status', '<', $params['follower_status']);
                 if ($params['following_count']) $query->where('following_count', '<', $params['following_count']);
@@ -470,7 +470,7 @@ class Push extends Common
                     $query->where("has_nickname", 0);
                 }
             })
-            ->where('tasklist_id', 'in', $params['tasklist_id_list'])
+            ->where(['tasklist_id' => ['in', $params['tasklist_id_list']], 'country' => ['in', $params['country_list']]])
             ->field("uid,sec_uid")->select()->toArray();
 
 
@@ -544,7 +544,7 @@ class Push extends Common
      * @apiDescription  发布评论点赞任务
      * @apiParam (输入参数：) {int}              [grouping_id] 分组ID
      * @apiParam (输入参数：) {int}              [typecronl_id] 分类ID
-     * @apiParam (输入参数：) {string}           [country] 国家
+     * @apiParam (输入参数：) {string}           [country_list] 国家
      * @apiParam (输入参数：) {array}            [tasklist_id_list] 数据来源ID列表
      * @apiParam (输入参数：) {int}              [user_digg_upper_limit] 单号关注上限
      * @apiParam (输入参数：) {int}              [can_fail_num] 连续失败次数
@@ -569,7 +569,7 @@ class Push extends Common
         $rule = [
             'grouping_id' => 'require',
             'typecronl_id' => 'require',
-            'country' => 'require',
+            'country_list' => 'require',
             'user_digg_upper_limit' => 'require',
             'can_fail_num' => 'require',
             'tasklist_id_list' => 'require',
@@ -580,7 +580,7 @@ class Push extends Common
         $msg = [
             'grouping_id.require' => '分组id必传',
             'typecronl_id.require' => '分组id必传',
-            'country.require' => 'country（国家）必传',
+            'country_list.require' => '国家必传',
             'user_digg_upper_limit.require' => 'user_digg_upper_limit（单号点赞上限）必传',
             'can_fail_num.require' => 'can_fail_num（可失败次数）必传',
             'tasklist_id_list.require' => 'tasklist_id_list（数据来源（采集任务ID））必传',
@@ -602,12 +602,12 @@ class Push extends Common
         $members = db('member')->where('uid', 'in', $params['uid_list'])->field('uid,sec_uid,unique_id,token')->select();
         $comment_list = db('comment_list')
             ->where(function ($query) use ($params) {
-                $query->where('account_region', $params['country']);
                 if ($params['comment_digg_count_lower_limit']) {
                     $query->where('digg_count', '<', $params['comment_digg_count_lower_limit']);
                 }
             })
             ->where([
+                'account_region' => ['in', $params['country_list']],
                 'tasklist_id' => ['in', $params['tasklist_id_list']],
             ])
             ->field("cid,aweme_id")->select()->toArray();
@@ -736,7 +736,7 @@ class Push extends Common
             "task_type" => $task_type,
             "task_num" => $total_need_push_video_num,
             "create_time" => time(),
-            "api_user_id"=>$this->request->uid,
+            "api_user_id" => $this->request->uid,
             'redis_key' => $redis_key,
             'tmp_redis_key' => '',
             "status" => 1,
@@ -789,7 +789,7 @@ class Push extends Common
                     "tasklist_id" => $task_id,
                     "parameter" => $parameter,
                     "status" => 1,
-                    "api_user_id"=> $this->request->uid,
+                    "api_user_id" => $this->request->uid,
                     "create_time" => time(),
                     "task_type" => $task_type,
                     "crux" => $uid
