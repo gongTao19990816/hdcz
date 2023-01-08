@@ -27,7 +27,7 @@ class Tasklist extends Common
      * @apiParam (输入参数：) {int}            [page] 当前页码
      * @apiParam (输入参数：) {string}        [task_name] 任务名称
      * @apiParam (输入参数：) {string}        [task_type] 任务类型
-     * @apiParam (输入参数：) {int}            [status] 状态 未完成|1|success,已完成|0|danger
+     * @apiParam (输入参数：) {int}            [status] 状态 未完成|1|success,已完成|0|danger,暂停|2|danger
      * @apiParam (失败返回参数：) {object}        array 返回结果集
      * @apiParam (失败返回参数：) {string}        array.status 返回错误码 201
      * @apiParam (失败返回参数：) {string}        array.msg 返回错误消息
