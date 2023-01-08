@@ -148,7 +148,7 @@ class Collection extends Common
             "status" => 1,
         ];
         $task_id = db("tasklisttwo")->insertGetId($task);
-        echo json_encode(['status' => 200, 'msg' => "视频任务发布中，可使用GET传递task_id访问'/api/push/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
+        echo json_encode(['status' => 200, 'msg' => "视频任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
 
         $redis = connectRedis();

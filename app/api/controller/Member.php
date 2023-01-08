@@ -280,7 +280,7 @@ class Member extends Common
         ];
         $task_id = db("tasklist")->insertGetId($task);
         Cache::set('last_refresh_update_data', ['grouping_id' => $where['grouping_id'], 'typecontrol_id' => $where['typecontrol_id'], 'create_time' => time(), 'task_id' => $task_id], 1 * 60 * 60);
-        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
+        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
         $task_details = [];
         $redis = connectRedis();

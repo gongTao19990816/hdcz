@@ -81,9 +81,9 @@ class Push extends Common
                 'tasklist_id' => ['in', $params['tasklist_id_list']],
             ])
             ->field("cid,aweme_id")->count();
-        if($comment_num){
+        if ($comment_num) {
             $num = $comment_num;
-        }else{
+        } else {
             $num = 0;
         }
 
@@ -234,7 +234,7 @@ class Push extends Common
             'api_user_id' => $this->request->uid
         ];
         $task_id = db("tasklist")->insertGetId($task);
-        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
+        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
         //操作用户查询
         $members = db('member')->where('uid', 'in', $params['uid_list'])->field('uid,sec_uid,unique_id,token')->select()->toArray();
@@ -425,7 +425,7 @@ class Push extends Common
             'api_user_id' => $this->request->uid
         ];
         $task_id = db("tasklist")->insertGetId($task);
-        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
+        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
 
         unset($member);
@@ -562,7 +562,7 @@ class Push extends Common
             'api_user_id' => $this->request->uid
         ];
         $task_id = db("tasklist")->insertGetId($task);
-        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
+        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
         $redis = connectRedis();
         $task_details = [];
@@ -606,8 +606,31 @@ class Push extends Common
         }
     }
 
+
     /**
-     * 发布视频任务
+     * @api {post} /Push/video 02、发布视频任务
+     * @apiGroup Push
+     * @apiVersion 1.0.0
+     * @apiDescription  发布视频任务
+     * @apiParam (输入参数：) {int}              [grouping_id] 分组ID
+     * @apiParam (输入参数：) {int}              [typecronl_id] 分类ID
+     * @apiParam (输入参数：) {int}              [video_num] 视频数量
+     * @apiParam (输入参数：) {int}              [label_num] 标签数量
+     * @apiParam (输入参数：) {int}              [user_num] @用户数量
+     * @apiParam (输入参数：) {int}              [push_time] 发布时间
+     * @apiParam (输入参数：) {string}           [text] 主题内容
+     * @apiParam (输入参数：) {bool}             [text_round] 是否随机主题内容
+     * @apiParam (输入参数：) {string}           [task_name] 任务名称
+     * @apiParam (失败返回参数：) {object}        array 返回结果集
+     * @apiParam (失败返回参数：) {string}        array.status 返回错误码 201
+     * @apiParam (失败返回参数：) {string}        array.msg 返回错误消息
+     * @apiParam (成功返回参数：) {string}        array 返回结果集
+     * @apiParam (成功返回参数：) {string}        array.status 返回错误码 200
+     * @apiParam (成功返回参数：) {string}        array.msg 返回成功信息
+     * @apiSuccessExample {json} 01 成功示例
+     * {"status":"200","mas":"创建成功"}
+     * @apiErrorExample {json} 02 失败示例
+     * {"status":" 201","msg":"查询失败"}
      */
     function video()
     {
@@ -641,7 +664,7 @@ class Push extends Common
         $video_num = $params["video_num"];
         $label_num = $params["label_num"];
         $user_num = $params["user_num"];
-        $task_name = $params["task_namme"];
+        $task_name = $params["task_name"];
         $push_time = $params['push_time'];
         $text = $params["text"];
         $text_round = $params["text_round"];
@@ -667,7 +690,7 @@ class Push extends Common
         checkTaskNum($total_need_push_video_num);
         $redis_key = get_task_key('push_video');
         $task = [
-            "task_name" => "视频发布",
+            "task_name" => $task_name,
             "task_type" => $task_type,
             "task_num" => $total_need_push_video_num,
             "create_time" => time(),
@@ -678,7 +701,7 @@ class Push extends Common
             "complete_num" => 0
         ];
         $task_id = db("tasklist")->insertGetId($task);
-        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/push/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
+        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
         $redis = connectRedis();
         $task_details = [];
