@@ -804,8 +804,6 @@ class Member extends Common
                 $redis->lPush('task', json_encode($adddata));
             }
         }
-// 		$arr = $this->suijisucai(2,6);
-// 		var_dump($arr);die;
         return $this->ajaxReturn($this->successCode, '更新成功' . $user['uid']);
 
     }
