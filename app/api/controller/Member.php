@@ -757,6 +757,32 @@ class Member extends Common
         // var_dump($arr);die;
     }
 
+    /**
+     * @api {post} /Member/BatchUpdateUserDatas 03、批量修改
+     * @apiGroup Member
+     * @apiVersion 1.0.0
+     * @apiDescription  批量修改
+     * @apiParam (输入参数：) {array}            uid_list 要修改的uid列表
+     * @apiParam (输入参数：) {int}              old_typecontrol_id  老的分类id
+     * @apiParam (输入参数：) {int}              old_grouping_id  老的分组id   要么修改之前的分组id和分类传，要么uid_list传，二选一
+     * @apiParam (输入参数：) {int}              typecontrol_id  要修改的分类id
+     * @apiParam (输入参数：) {int}              grouping_id  要修改的分组id
+     * @apiParam (输入参数：) {int}              nickname  昵称 不修改为空，要修改为1
+     * @apiParam (输入参数：) {int}              avatar_thumb  头像 不修改为空，要修改为1
+     * @apiParam (输入参数：) {int}              signature  签名 不修改为空，要修改为1
+     * @apiParam (输入参数：) {object}
+     * @apiParam (失败返回参数：) {object}        array 返回结果集
+     * @apiParam (失败返回参数：) {string}        array.status 返回错误码 201
+     * @apiParam (失败返回参数：) {string}        array.msg 返回错误消息
+     * @apiParam (成功返回参数：) {string}        array 返回结果集
+     * @apiParam (成功返回参数：) {string}        array.status 返回错误码 200
+     * @apiParam (成功返回参数：) {string}        array.msg 返回成功消息
+     * @apiSuccessExample {json} 01 成功示例
+     * {"status":"200","msg":"操作成功"}
+     * @apiErrorExample {json} 02 失败示例
+     * {"status":"201","msg":"操作失败"}
+     */
+
     function BatchUpdateUserDatas()
     {
         $params = $this->request->post();
@@ -792,8 +818,11 @@ class Member extends Common
         $addtask['task_num'] = count($members);
         $addtask['redis_key'] = $redis_key;
         $addtask['create_time'] = time();
+        $addtask['api_user_id'] = $this->request->uid;
         $addtask['status'] = 1;
         $usertask = db('tasklist')->insertGetId($addtask);
+        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $usertask]]);
+        flushRequest();
         $redis = connectRedis();
         $details = [];
         foreach ($members as &$uid) {
@@ -808,11 +837,15 @@ class Member extends Common
 
                     $taskdata['type'] = "nickname";
                     $taskdata['nickname'] = $this->suijisucai(1, $old_typecontrol_id);
+                    $taskdata['uid'] = $uid['uid'];
+                    $taskdata['token'] = $uid['token'];
+                    $taskdata['proxy'] = getHttpProxy($uid['uid']);
 
                     $adddata['parameter'] = json_encode($taskdata);
                     $adddata['create_time'] = time();
                     $adddata['task_type'] = $task_type;
                     $adddata['tasklist_id'] = $usertask;
+                    $addtask['api_user_id'] = $this->request->uid;
                     $adddata['crux'] = $uid['uid'];
                     unset($adddata['tasklistdetail_id']);
 
@@ -825,11 +858,15 @@ class Member extends Common
 
                     $taskdata['type'] = "avatar_thumb";
                     $taskdata['avatar_thumb'] = $this->suijisucai(3, $old_typecontrol_id);
+                    $taskdata['uid'] = $uid['uid'];
+                    $taskdata['token'] = $uid['token'];
+                    $taskdata['proxy'] = getHttpProxy($uid['uid']);
 
                     $adddata['parameter'] = json_encode($taskdata);
                     $adddata['create_time'] = time();
                     $adddata['task_type'] = $task_type;
                     $adddata['tasklist_id'] = $usertask;
+                    $addtask['api_user_id'] = $this->request->uid;
                     $adddata['crux'] = $uid['uid'];
                     unset($adddata['tasklistdetail_id']);
 
@@ -842,11 +879,15 @@ class Member extends Common
 
                     $taskdata['type'] = "signature";
                     $taskdata['signature'] = $this->suijisucai(2, $old_typecontrol_id);
+                    $taskdata['uid'] = $uid['uid'];
+                    $taskdata['token'] = $uid['token'];
+                    $taskdata['proxy'] = getHttpProxy($uid['uid']);
 
                     $adddata['parameter'] = json_encode($taskdata);
                     $adddata['create_time'] = time();
                     $adddata['task_type'] = $task_type;
                     $adddata['tasklist_id'] = $usertask;
+                    $addtask['api_user_id'] = $this->request->uid;
                     $adddata['crux'] = $uid['uid'];
                     unset($adddata['tasklistdetail_id']);
 
