@@ -250,7 +250,7 @@ class Member extends Common
             throw new ValidateException("分类不能为空");
         }
 
-        Cache::delete('last_refresh_update_data');
+        // Cache::delete('last_refresh_update_data');
         if (Cache::has('last_refresh_update_data')) {
             $last = Cache::get('last_refresh_update_data');
             $jg = (time() - $last['create_time']) < 1 * 60 * 60;
