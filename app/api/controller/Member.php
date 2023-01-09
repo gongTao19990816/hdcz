@@ -811,18 +811,17 @@ class Member extends Common
         $old_grouping_id = $params['old_grouping_id'];//要修改的老分组
         $type_list = $params['type_list'];
 
-        if ($type_list) {
-            if (count($type_list)) {
-                throw new ValidateException('要修改项不能低于一种');
-            }
-            if (!in_array("nickname", $type_list)
-                && !in_array("avatar_thumb", $type_list)
-                && !in_array("signature", $type_list)
-                && !in_array("typecontrol_id", $type_list)
-                && !in_array("grouping_id", $type_list)) {
-                throw new ValidateException(['不明确的修改类型', ['type_list' => ['nickname', 'avatar_thumb', 'signature', 'grouping_id', 'typecontrol_id']]]);
-            }
+        if (count($type_list)) {
+            throw new ValidateException('要修改项不能低于一种');
         }
+        if (!in_array("nickname", $type_list)
+            && !in_array("avatar_thumb", $type_list)
+            && !in_array("signature", $type_list)
+            && !in_array("typecontrol_id", $type_list)
+            && !in_array("grouping_id", $type_list)) {
+            throw new ValidateException(['不明确的修改类型', ['type_list' => ['nickname', 'avatar_thumb', 'signature', 'grouping_id', 'typecontrol_id']]]);
+        }
+
         $typecontrol_id = $type_list['typecontrol_id']; //需要修改的新分类
         $grouping_id = $type_list['grouping_id'];//需要修改的新分组
         $nickname = $type_list['nickname'];
