@@ -430,7 +430,6 @@ class Push extends Common
         ];
         $task_id = db("tasklist")->insertGetId($task);
         //往中间表中添加数据
-        foreach ($members)
         echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
         foreach ($members as $member) {
