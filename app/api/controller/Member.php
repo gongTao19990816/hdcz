@@ -852,7 +852,7 @@ class Member extends Common
                 db('member')->where('uid', $member['uid'])->update(['grouping_id' => $grouping_id]);
             }
         }
-        if ($nickname || $avatar_thumb || $signature) {
+        if (in_array("nickname", $type_list) || in_array("avatar_thumb", $type_list) || in_array("signature", $type_list)) {
             $redis_key = get_task_key("batch_update_user_datas");
             $addtask['task_name'] = '批量修改账户';
             $addtask['task_type'] = $task_type;
@@ -862,8 +862,8 @@ class Member extends Common
             $addtask['api_user_id'] = $this->request->uid;
             $addtask['status'] = 1;
             $usertask = db('tasklist')->insertGetId($addtask);
-            // echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $usertask]]);
-            // flushRequest();
+             echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $usertask]]);
+             flushRequest();
             $redis = connectRedis();
             $details = [];
             foreach ($members as &$member) {
