@@ -818,19 +818,18 @@ class Member extends Common
         }
         if ($uid_list && (empty($old_typecontrol_id) && empty($old_grouping_id))) {
             $idx = implode(",", $uid_list);
-            $where[] = ['uid' => ['in', $idx]];
+            $where[] = ['uid', 'in', $idx];
         }
         if ($old_typecontrol_id && $old_grouping_id) {
-            $where[] = ['typecontrol_id' => $old_typecontrol_id];
-            $where[] = ['grouping_id' => $old_grouping_id];
+            $where['typecontrol_id'] = $old_typecontrol_id;
+            $where['grouping_id'] =$old_grouping_id;
         }
         if (empty($typecontrol_id) && empty($grouping_id) && empty($nickname) && empty($avatar_thumb) && empty($signature)) {
             throw new ValidateException('要修改项不能低于一种');
         }
-        // var_dump($where);die;
+
         $members = db('member')->where($where)->field('uid,token')->buildsql();
-        var_dump($members);
-        die;
+
         if (empty($members)) {
             throw new ValidateException('没有账户');
         }
