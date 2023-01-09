@@ -332,9 +332,7 @@ class Typecontrol extends Common
             if ($nickname_id) {
                 db('nickname')->where('nickname_id', $nickname_id)->inc('usage_count')->update();
             }
-            if ($video_num) {
-                db('material')->where('video_num', $video_num)->update();
-            }
+
             if ($headimage_id) {
                 db('headimage')->where('headimage_id', $headimage_id)->inc('usage_count')->update();
             }
