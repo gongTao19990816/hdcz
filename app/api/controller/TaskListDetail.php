@@ -60,6 +60,9 @@ class TaskListDetail extends Common
             $row['receive_time'] = date("Y-m-d H:i:s", $row['receive_time']);
             $row['create_time'] = date("Y-m-d H:i:s", $row['create_time']);
             $row['complete_time'] = date("Y-m-d H:i:s", $row['complete_time']);
+            $row['userinfo'] = db('member')->where('uid',$row['crux'])->field('nickname,signature,avatar_thumb,backups_name,phone_number,typecontrol_id')->find();
+            $row['type_title'] = getTypeParentNames($row['userinfo']['typecontrol_id']);
+
         }
         return $this->ajaxReturn($this->successCode, '返回成功', htmlOutList($res));
     }
