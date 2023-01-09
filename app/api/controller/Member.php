@@ -811,7 +811,7 @@ class Member extends Common
         $old_grouping_id = $params['old_grouping_id'];//要修改的老分组
         $type_list = $params['type_list'];
 
-        if (count($type_list)) {
+        if (!count($type_list)) {
             throw new ValidateException('要修改项不能低于一种');
         }
         if (!in_array("nickname", $type_list)
