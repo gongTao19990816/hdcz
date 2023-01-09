@@ -757,6 +757,7 @@ class Member extends Common
         // var_dump($arr);die;
     }
 
+
     /**
      * @api {post} /Member/MemberSaveNew 03、查询最新批量修改记录  head 传token
      * @apiGroup Member
@@ -768,10 +769,11 @@ class Member extends Common
     function MemberSaveNew(){
         $api_user_id['api_user_id'] = $this->request->uid;
         $api_user_id['task_type'] = "BatchUpdateUserData";
+        // var_dump($api_user_id);die;
         $tasklist = db('tasklist')->where($api_user_id)->order('tasklist_id desc')->find();
+        // var_dump($tasklist);die;
         return $this->ajaxReturn($this->successCode, '操作成功' , $tasklist);
     }
-
 
     /**
      * @api {post} /Member/BatchUpdateUserDatas 03、批量修改
@@ -815,7 +817,8 @@ class Member extends Common
             throw new ValidateException('uidlist和分组分类二选一必传');
         }
         if ($uid_list && (empty($old_typecontrol_id) && empty($old_grouping_id))) {
-            $where['uid'] = ['in', $uid_list];
+            $idx  = implode(",",$uid_list);
+            $where['uid'] = ['in', $idx];
         }
         if ($old_typecontrol_id && $old_grouping_id) {
             $where['typecontrol_id'] = $old_typecontrol_id;
@@ -824,7 +827,9 @@ class Member extends Common
         if (empty($typecontrol_id) && empty($grouping_id) && empty($nickname) && empty($avatar_thumb) && empty($signature)) {
             throw new ValidateException('要修改项不能低于一种');
         }
-        $members = db('member')->where($where)->field('uid,token')->select()->toArray();
+        // var_dump($where);die;
+        $members = db('member')->where($where)->field('uid,token')->buildsql();
+        var_dump($members);die;
         if (empty($members)) {
             throw new ValidateException('没有账户');
         }
@@ -919,7 +924,6 @@ class Member extends Common
             $redis->lPush($redis_key, json_encode($detail));
         }
     }
-
 
     function BatchUpdateUserData()
     {
