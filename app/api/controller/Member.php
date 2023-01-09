@@ -823,7 +823,7 @@ class Member extends Common
         }
         if ($old_typecontrol_id && $old_grouping_id) {
             $where['typecontrol_id'] = $old_typecontrol_id;
-            $where['grouping_id'] =$old_grouping_id;
+            $where['grouping_id'] = $old_grouping_id;
         }
         if (empty($typecontrol_id) && empty($grouping_id) && empty($nickname) && empty($avatar_thumb) && empty($signature)) {
             throw new ValidateException('要修改项不能低于一种');
@@ -834,95 +834,102 @@ class Member extends Common
         if (empty($members)) {
             throw new ValidateException('没有账户');
         }
-        $redis_key = get_task_key("batch_update_user_datas");
-        $addtask['task_name'] = '批量修改账户';
-        $addtask['task_type'] = $task_type;
-        $addtask['task_num'] = count($members);
-        $addtask['redis_key'] = $redis_key;
-        $addtask['create_time'] = time();
-        $addtask['api_user_id'] = $this->request->uid;
-        $addtask['status'] = 1;
-        $usertask = db('tasklist')->insertGetId($addtask);
-        // echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $usertask]]);
-        // flushRequest();
-        $redis = connectRedis();
-        $details = [];
-        foreach ($members as &$uid) {
+        foreach ($members as $member) {
             if ($typecontrol_id) {
-                db('member')->where('uid', $uid['uid'])->update(['typecontrol_id' => $typecontrol_id]);
+                db('member')->where('uid', $member['uid'])->update(['typecontrol_id' => $typecontrol_id]);
             }
             if ($grouping_id) {
-                db('member')->where('uid', $uid['uid'])->update(['grouping_id' => $grouping_id]);
-            }
-            for ($i = 0; $i < 3; $i++) {
-                if ($i == 0 && $nickname) {
-
-                    $taskdata['type'] = "nickname";
-                    $taskdata['nickname'] = $this->suijisucai(1, $uid['typecontrol_id']);
-                    $taskdata['uid'] = $uid['uid'];
-                    $taskdata['token'] = $uid['token'];
-                    $taskdata['proxy'] = getHttpProxy($uid['uid']);
-
-                    $adddata['parameter'] = json_encode($taskdata);
-                    $adddata['create_time'] = time();
-                    $adddata['task_type'] = $task_type;
-                    $adddata['tasklist_id'] = $usertask;
-                    $addtask['api_user_id'] = $this->request->uid;
-                    $adddata['crux'] = $uid['uid'];
-                    unset($adddata['tasklistdetail_id']);
-
-                    $arr = \app\api\model\TaskListDetail::add($adddata);
-                    $adddata['tasklistdetail_id'] = $arr;
-                    $adddata['parameter'] = json_decode($adddata['parameter'], true);
-                    $details[] = $adddata;
-
-                } else if ($i == 1 && $avatar_thumb) {
-
-                    $taskdata['type'] = "avatar_thumb";
-                    $taskdata['avatar_thumb'] = $this->suijisucai(3, $uid['typecontrol_id']);
-                    $taskdata['uid'] = $uid['uid'];
-                    $taskdata['token'] = $uid['token'];
-                    $taskdata['proxy'] = getHttpProxy($uid['uid']);
-
-                    $adddata['parameter'] = json_encode($taskdata);
-                    $adddata['create_time'] = time();
-                    $adddata['task_type'] = $task_type;
-                    $adddata['tasklist_id'] = $usertask;
-                    $addtask['api_user_id'] = $this->request->uid;
-                    $adddata['crux'] = $uid['uid'];
-                    unset($adddata['tasklistdetail_id']);
-
-                    $arr = \app\api\model\TaskListDetail::add($adddata);
-                    $adddata['tasklistdetail_id'] = $arr;
-                    $adddata['parameter'] = json_decode($adddata['parameter'], true);
-                    $details[] = $adddata;
-
-                } else if ($i == 2 && $signature) {
-
-                    $taskdata['type'] = "signature";
-                    $taskdata['signature'] = $this->suijisucai(2, $uid['typecontrol_id']);
-                    $taskdata['uid'] = $uid['uid'];
-                    $taskdata['token'] = $uid['token'];
-                    $taskdata['proxy'] = getHttpProxy($uid['uid']);
-
-                    $adddata['parameter'] = json_encode($taskdata);
-                    $adddata['create_time'] = time();
-                    $adddata['task_type'] = $task_type;
-                    $adddata['tasklist_id'] = $usertask;
-                    $addtask['api_user_id'] = $this->request->uid;
-                    $adddata['crux'] = $uid['uid'];
-                    unset($adddata['tasklistdetail_id']);
-
-                    $arr = \app\api\model\TaskListDetail::add($adddata);
-                    $adddata['tasklistdetail_id'] = $arr;
-                    $adddata['parameter'] = json_decode($adddata['parameter'], true);
-                    $details[] = $adddata;
-
-                }
+                db('member')->where('uid', $member['uid'])->update(['grouping_id' => $grouping_id]);
             }
         }
-        foreach ($details as $detail) {
-            $redis->lPush($redis_key, json_encode($detail));
+        if ($nickname || $avatar_thumb || $signature) {
+            $redis_key = get_task_key("batch_update_user_datas");
+            $addtask['task_name'] = '批量修改账户';
+            $addtask['task_type'] = $task_type;
+            $addtask['task_num'] = count($members);
+            $addtask['redis_key'] = $redis_key;
+            $addtask['create_time'] = time();
+            $addtask['api_user_id'] = $this->request->uid;
+            $addtask['status'] = 1;
+            $usertask = db('tasklist')->insertGetId($addtask);
+            // echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $usertask]]);
+            // flushRequest();
+            $redis = connectRedis();
+            $details = [];
+            foreach ($members as &$member) {
+                for ($i = 0; $i < 3; $i++) {
+                    if ($i == 0 && $nickname) {
+
+                        $taskdata['type'] = "nickname";
+                        $taskdata['nickname'] = $this->suijisucai(1, $member['typecontrol_id']);
+                        $taskdata['uid'] = $member['uid'];
+                        $taskdata['token'] = $member['token'];
+                        $taskdata['proxy'] = getHttpProxy($member['uid']);
+
+                        $adddata['parameter'] = json_encode($taskdata);
+                        $adddata['create_time'] = time();
+                        $adddata['task_type'] = $task_type;
+                        $adddata['tasklist_id'] = $usertask;
+                        $addtask['api_user_id'] = $this->request->uid;
+                        $adddata['crux'] = $member['uid'];
+                        unset($adddata['tasklistdetail_id']);
+
+                        $arr = \app\api\model\TaskListDetail::add($adddata);
+                        $adddata['tasklistdetail_id'] = $arr;
+                        $adddata['parameter'] = json_decode($adddata['parameter'], true);
+                        $details[] = $adddata;
+
+                    } else if ($i == 1 && $avatar_thumb) {
+
+                        $taskdata['type'] = "avatar_thumb";
+                        $taskdata['avatar_thumb'] = $this->suijisucai(3, $member['typecontrol_id']);
+                        $taskdata['uid'] = $member['uid'];
+                        $taskdata['token'] = $member['token'];
+                        $taskdata['proxy'] = getHttpProxy($member['uid']);
+
+                        $adddata['parameter'] = json_encode($taskdata);
+                        $adddata['create_time'] = time();
+                        $adddata['task_type'] = $task_type;
+                        $adddata['tasklist_id'] = $usertask;
+                        $addtask['api_user_id'] = $this->request->uid;
+                        $adddata['crux'] = $member['uid'];
+                        unset($adddata['tasklistdetail_id']);
+
+                        $arr = \app\api\model\TaskListDetail::add($adddata);
+                        $adddata['tasklistdetail_id'] = $arr;
+                        $adddata['parameter'] = json_decode($adddata['parameter'], true);
+                        $details[] = $adddata;
+
+                    } else if ($i == 2 && $signature) {
+
+                        $taskdata['type'] = "signature";
+                        $taskdata['signature'] = $this->suijisucai(2, $member['typecontrol_id']);
+                        $taskdata['uid'] = $member['uid'];
+                        $taskdata['token'] = $member['token'];
+                        $taskdata['proxy'] = getHttpProxy($member['uid']);
+
+                        $adddata['parameter'] = json_encode($taskdata);
+                        $adddata['create_time'] = time();
+                        $adddata['task_type'] = $task_type;
+                        $adddata['tasklist_id'] = $usertask;
+                        $addtask['api_user_id'] = $this->request->uid;
+                        $adddata['crux'] = $member['uid'];
+                        unset($adddata['tasklistdetail_id']);
+
+                        $arr = \app\api\model\TaskListDetail::add($adddata);
+                        $adddata['tasklistdetail_id'] = $arr;
+                        $adddata['parameter'] = json_decode($adddata['parameter'], true);
+                        $details[] = $adddata;
+
+                    }
+                }
+            }
+            foreach ($details as $detail) {
+                $redis->lPush($redis_key, json_encode($detail));
+            }
+        } else {
+            echo json_encode(['status' => 200, 'msg' => "修改成功"]);
+            flushRequest();
         }
     }
 
