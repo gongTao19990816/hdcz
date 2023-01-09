@@ -804,6 +804,7 @@ class Member extends Common
     function BatchUpdateUserDatas()
     {
         $params = $this->request->post();
+        // var_dump($params);die;
         $task_type = "BatchUpdateUserData";
         $uid_list = $params['uid_list'];//要修改的uid
         $old_typecontrol_id = $params['old_typecontrol_id'];//要修改的老分类
@@ -828,8 +829,8 @@ class Member extends Common
             throw new ValidateException('要修改项不能低于一种');
         }
 
-        $members = db('member')->where($where)->field('uid,token')->buildsql();
-
+        $members = db('member')->where($where)->field('uid,token,typecontrol_id')->select()->toArray();
+        // var_dump($members);die;
         if (empty($members)) {
             throw new ValidateException('没有账户');
         }
@@ -842,8 +843,8 @@ class Member extends Common
         $addtask['api_user_id'] = $this->request->uid;
         $addtask['status'] = 1;
         $usertask = db('tasklist')->insertGetId($addtask);
-        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $usertask]]);
-        flushRequest();
+        // echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $usertask]]);
+        // flushRequest();
         $redis = connectRedis();
         $details = [];
         foreach ($members as &$uid) {
@@ -857,7 +858,7 @@ class Member extends Common
                 if ($i == 0 && $nickname) {
 
                     $taskdata['type'] = "nickname";
-                    $taskdata['nickname'] = $this->suijisucai(1, $old_typecontrol_id);
+                    $taskdata['nickname'] = $this->suijisucai(1, $uid['typecontrol_id']);
                     $taskdata['uid'] = $uid['uid'];
                     $taskdata['token'] = $uid['token'];
                     $taskdata['proxy'] = getHttpProxy($uid['uid']);
@@ -878,7 +879,7 @@ class Member extends Common
                 } else if ($i == 1 && $avatar_thumb) {
 
                     $taskdata['type'] = "avatar_thumb";
-                    $taskdata['avatar_thumb'] = $this->suijisucai(3, $old_typecontrol_id);
+                    $taskdata['avatar_thumb'] = $this->suijisucai(3, $uid['typecontrol_id']);
                     $taskdata['uid'] = $uid['uid'];
                     $taskdata['token'] = $uid['token'];
                     $taskdata['proxy'] = getHttpProxy($uid['uid']);
@@ -899,7 +900,7 @@ class Member extends Common
                 } else if ($i == 2 && $signature) {
 
                     $taskdata['type'] = "signature";
-                    $taskdata['signature'] = $this->suijisucai(2, $old_typecontrol_id);
+                    $taskdata['signature'] = $this->suijisucai(2, $uid['typecontrol_id']);
                     $taskdata['uid'] = $uid['uid'];
                     $taskdata['token'] = $uid['token'];
                     $taskdata['proxy'] = getHttpProxy($uid['uid']);
