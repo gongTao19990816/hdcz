@@ -185,10 +185,10 @@ class Push extends Common
             'country_list' => 'require',
             'tasklist_id_list' => 'require',
             'user_chat_upper_limit' => 'require',
-            'total_task_num' => '',
+//            'total_task_num' => '',
             'privateletter_id' => 'require',
             'type_list' => 'require',
-            'reset_status' => '',
+//            'reset_status' => '',
             'task_name' => 'require',
         ];
 
@@ -197,8 +197,8 @@ class Push extends Common
             'type_list.require' => 'type_list（私信类型）必传',
             'country_list.require' => '国家必传',
             'user_chat_upper_limit.require' => 'user_chat_upper_limit（单号私信上限）必传',
-            'total_task_num.require' => 'total_task_num（总私信上限）必传',
-            'reset_status.require' => 'reset_status（重置粉丝状态）必传',
+//            'total_task_num.require' => 'total_task_num（总私信上限）必传',
+//            'reset_status.require' => 'reset_status（重置粉丝状态）必传',
             'task_name.require' => 'task_name（任务名称）必传',
             'privateletter_id.require' => 'privateletter_id（私信素材库ID）必传',
             'uid_list.require' => 'uid_list（账号列表）必传',

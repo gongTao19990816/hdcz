@@ -73,6 +73,12 @@ class Tasklist extends Common
             $member = \app\api\model\Member::where("uid", $item['uid'])->field('avatar_thumb,uid,nickname,signature,phone_number,backups_name,typecontrol_id')->find()->toArray();
             $member['type_parent_names_text'] = getTypeParentNames($member['typecontrol_id']);
             $item['member'] = $member;
+            $task_type = db('tasklist')->where('tasklist_id',$item['tasklist_id'])->value('task_type');
+            $item['pici_num'] = db('tasklistdetail')->where(['task_type'=>$task_type,'crux'=>$item['uid']])->count();
+            $item['success_num'] = db('tasklistdetail')->where(['tasklist_id'=>$item['tasklist_id'],'crux'=>$item['uid'],'status'=>0])->count();
+            $item['fail_num'] = db('tasklistdetail')->where(['tasklist_id'=>$item['tasklist_id'],'crux'=>$item['uid'],'status'=>2])->count();
+            $item['tasklistdetail'] = db('tasklistdetail')->where(['tasklist_id'=>$item['tasklist_id'],'crux'=>$item['uid']])->order('tasklist_id desc')->find();
+
         }
         return $this->ajaxReturn($this->successCode, '返回成功', $list);
     }
