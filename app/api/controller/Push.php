@@ -377,7 +377,7 @@ class Push extends Common
             }
         }
         //操作用户查询
-        $members = db('member')->where(['typecontrol_id'=>$params['typecronl_id'],'grouping_id'=>$params['grouping_id']])->field('uid,sec_uid,unique_id,token')->select();
+        $members = db('member')->where(['typecontrol_id' => $params['typecronl_id'], 'grouping_id' => $params['grouping_id']])->field('uid,sec_uid,unique_id,token')->select();
         $user_follow_upper_limit = $params['user_follow_upper_limit'];
         $total_task_num = 0;
         foreach ($members as &$member) {
@@ -409,10 +409,9 @@ class Push extends Common
                     $query->where("has_nickname", 0);
                 }
             })
-            ->where(['tasklist_id' => ['in', $params['tasklist_id_list']], 'country' => ['in', $params['country_list']]])
+            ->where(['tasklist_id' => ['in', implode($params['tasklist_id_list'], ",")], 'country' => ['in', implode($params['country_list'], ",")]])
             ->field("uid,sec_uid")->select()->toArray();
 
-        // var_dump($members);die;
         if (count($external_members) < $total_task_num) {
             throw new ValidateException('当前条件下可关注博主仅剩' . count($external_members) . '个');
         }
