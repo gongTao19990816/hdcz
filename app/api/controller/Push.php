@@ -248,6 +248,10 @@ class Push extends Common
         $redis = connectRedis();
         $task_details = [];
         foreach ($members as $member) {
+            $uid_task['uid'] = $member['uid'];
+            $uid_task['tasklist_id'] = $task_id;
+            $uid_task['num'] = $params['user_chat_upper_limit'];
+            db('task_uid')->insert($uid_task);
             if ($total_task_num) {
                 for ($i = 0; $i < $params['user_chat_upper_limit']; $i++) {
                     // 从查询出来的评论列表随机取一个评论，并从评论列表删除
@@ -425,11 +429,16 @@ class Push extends Common
             'api_user_id' => $this->request->uid
         ];
         $task_id = db("tasklist")->insertGetId($task);
+        //往中间表中添加数据
+        foreach ($members)
         echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
-
-        unset($member);
         foreach ($members as $member) {
+            //往中间表中添加数据
+            $uid_task['uid'] = $member['uid'];
+            $uid_task['tasklist_id'] = $task_id;
+            $uid_task['num'] = $user_follow_upper_limit;
+            db('task_uid')->insert($uid_task);
             for ($i = 0; $i < ($user_follow_upper_limit - $member['today_follow_num']); $i++) {
                 if ($external_members) {
                     $delay = rand($params['rate_min'], $params['rate_max']); //关注频率，延迟多少秒执行
@@ -469,6 +478,8 @@ class Push extends Common
                     }
                 }
             }
+
+
         }
     }
 
@@ -567,6 +578,10 @@ class Push extends Common
         $redis = connectRedis();
         $task_details = [];
         foreach ($members as $member) {
+            $uid_task['uid'] = $member['uid'];
+            $uid_task['tasklist_id'] = $task_id;
+            $uid_task['num'] = $user_digg_upper_limit;
+            db('task_uid')->insert($uid_task);
             if ($comment_list) {
                 for ($i = 0; $i < $user_digg_upper_limit; $i++) {
                     // 从查询出来的评论列表随机取一个评论，并从评论列表删除
@@ -706,6 +721,10 @@ class Push extends Common
         $redis = connectRedis();
         $task_details = [];
         foreach ($uid_list as $uid) {
+            $uid_task['uid'] = $uid['uid'];
+            $uid_task['tasklist_id'] = $task_id;
+            $uid_task['num'] = $video_num;
+            db('task_uid')->insert($uid_task);
             //取登录后的token
 //            $user_info = db('member')->field('token')->where(['uid' => $uid, 'status' => 1])->find();
 //            if (empty($user_info)) continue;
