@@ -758,6 +758,20 @@ class Member extends Common
     }
 
     /**
+     * @api {post} /Member/MemberSaveNew 03、查询最新批量修改记录
+     * @apiGroup Member
+     * @apiVersion 1.0.0
+     * @apiDescription  批量修改
+
+     */
+
+    function MemberSaveNew(){
+        $api_user_id['api_user_id'] = $this->request->uid;
+        $tasklist = db('tasklist')->where($api_user_id)->order('tasklist_id desc')->find();
+        return $this->ajaxReturn($this->successCode, '操作成功' , $tasklist);
+    }
+
+    /**
      * @api {post} /Member/BatchUpdateUserDatas 03、批量修改
      * @apiGroup Member
      * @apiVersion 1.0.0
@@ -903,6 +917,7 @@ class Member extends Common
             $redis->lPush($redis_key, json_encode($detail));
         }
     }
+
 
     function BatchUpdateUserData()
     {
