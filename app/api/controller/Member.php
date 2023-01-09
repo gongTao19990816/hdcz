@@ -758,7 +758,7 @@ class Member extends Common
     }
 
     /**
-     * @api {post} /Member/MemberSaveNew 03、查询最新批量修改记录
+     * @api {post} /Member/MemberSaveNew 03、查询最新批量修改记录  head 传token
      * @apiGroup Member
      * @apiVersion 1.0.0
      * @apiDescription  批量修改
