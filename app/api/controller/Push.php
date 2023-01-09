@@ -656,7 +656,7 @@ class Push extends Common
             'typecontrol_id' => 'require',
             'video_num' => 'require',
             'grouping_id' => 'require',
-            'task_namme' => 'require'
+            'task_name' => 'require'
         ];
 
         //错误提示
@@ -664,7 +664,7 @@ class Push extends Common
             'typecontrol_id.require' => '分类必传',
             'video_num.require' => '视频数量必传',
             'grouping_id.require' => '分组id必传',
-            'task_namme.require' => '任务名称必传',
+            'task_name.require' => '任务名称必传',
         ];
         //调用验证器
         $validate = Validate::rule($rule)->message($msg);
