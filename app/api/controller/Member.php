@@ -868,6 +868,7 @@ class Member extends Common
             $details = [];
             foreach ($members as &$member) {
                 foreach ($type_list as $type) {
+                    $taskdata = [];
                     switch ($type) {
                         case "nickname":
                             $taskdata['type'] = "nickname";
