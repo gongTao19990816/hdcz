@@ -967,7 +967,6 @@ class Member extends Common
     function suijisucai($type, $typecontrol_id)
     {
         $where['typecontrol_id'] = $typecontrol_id;
-        $where['status'] = 1;
         if ($type == 1) {
             $res = db('nickname')->where($where)->order('usage_count asc')->limit(1)->select()->toArray();
             $data = $res[0]['nickname'];
