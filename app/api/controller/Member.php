@@ -767,9 +767,11 @@ class Member extends Common
 
     function MemberSaveNew(){
         $api_user_id['api_user_id'] = $this->request->uid;
+        $api_user_id['task_type'] = "BatchUpdateUserData";
         $tasklist = db('tasklist')->where($api_user_id)->order('tasklist_id desc')->find();
         return $this->ajaxReturn($this->successCode, '操作成功' , $tasklist);
     }
+
 
     /**
      * @api {post} /Member/BatchUpdateUserDatas 03、批量修改
