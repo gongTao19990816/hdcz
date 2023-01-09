@@ -377,7 +377,7 @@ class Push extends Common
             }
         }
         //操作用户查询
-        $members = db('member')->where('uid', 'in', $params['uid_list'])->field('uid,sec_uid,unique_id,token')->select();
+        $members = db('member')->where(['typecontrol_id'=>$params['typecronl_id'],'grouping_id'=>$params['grouping_id']])->field('uid,sec_uid,unique_id,token')->select();
         $user_follow_upper_limit = $params['user_follow_upper_limit'];
         $total_task_num = 0;
         foreach ($members as &$member) {
@@ -412,7 +412,7 @@ class Push extends Common
             ->where(['tasklist_id' => ['in', $params['tasklist_id_list']], 'country' => ['in', $params['country_list']]])
             ->field("uid,sec_uid")->select()->toArray();
 
-
+        // var_dump($members);die;
         if (count($external_members) < $total_task_num) {
             throw new ValidateException('当前条件下可关注博主仅剩' . count($external_members) . '个');
         }
@@ -430,6 +430,7 @@ class Push extends Common
         ];
         $task_id = db("tasklist")->insertGetId($task);
         //往中间表中添加数据
+
         echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
         foreach ($members as $member) {
@@ -580,7 +581,7 @@ class Push extends Common
             $uid_task['uid'] = $member['uid'];
             $uid_task['tasklist_id'] = $task_id;
             $uid_task['num'] = $user_digg_upper_limit;
-            db('task_uid')->insert($uid_task);
+            db('task_uid')->insertGetId($uid_task);
             if ($comment_list) {
                 for ($i = 0; $i < $user_digg_upper_limit; $i++) {
                     // 从查询出来的评论列表随机取一个评论，并从评论列表删除
