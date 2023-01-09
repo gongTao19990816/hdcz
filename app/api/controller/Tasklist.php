@@ -9,6 +9,7 @@
 namespace app\api\controller;
 
 use app\api\model\Tasklist as TasklistModel;
+use app\api\model\TaskUid;
 use app\api\service\TasklistService;
 use RedisException;
 use think\Exception;
@@ -62,6 +63,13 @@ class Tasklist extends Common
             $row['create_time '] = date("Y-m-d H:i:s", $row['create_time']);
         }
         return $this->ajaxReturn($this->successCode, '返回成功', htmlOutList($res));
+    }
+
+    function task_uids()
+    {
+        $task_id = $this->request->get("tasklist_id");
+        $list = TaskUid::with(["member"])->where("tasklist_id", $task_id)->select()->toArray();
+        return $this->ajaxReturn($this->successCode, '返回成功', htmlOutList($list));
     }
 
     /**
