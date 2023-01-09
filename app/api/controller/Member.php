@@ -810,9 +810,8 @@ class Member extends Common
         $old_typecontrol_id = $params['old_typecontrol_id'];//要修改的老分类
         $old_grouping_id = $params['old_grouping_id'];//要修改的老分组
         $type_list = $params['type_list'];
-        var_dump($type_list);die;
-        // if ($type_list) {
-        if (!count($type_list)) {
+
+        if (count($type_list)) {
             throw new ValidateException('要修改项不能低于一种');
         }
         if (!in_array("nickname", $type_list)
@@ -822,7 +821,7 @@ class Member extends Common
             && !in_array("grouping_id", $type_list)) {
             throw new ValidateException(['不明确的修改类型', ['type_list' => ['nickname', 'avatar_thumb', 'signature', 'grouping_id', 'typecontrol_id']]]);
         }
-        // }
+
         $typecontrol_id = $type_list['typecontrol_id']; //需要修改的新分类
         $grouping_id = $type_list['grouping_id'];//需要修改的新分组
         $nickname = $type_list['nickname'];
@@ -853,8 +852,7 @@ class Member extends Common
                 db('member')->where('uid', $member['uid'])->update(['grouping_id' => $grouping_id]);
             }
         }
-        var_dump(isset($nickname));die;
-        if (isset($nickname) || $avatar_thumb || $signature) {
+        if ($nickname || $avatar_thumb || $signature) {
             $redis_key = get_task_key("batch_update_user_datas");
             $addtask['task_name'] = '批量修改账户';
             $addtask['task_type'] = $task_type;
