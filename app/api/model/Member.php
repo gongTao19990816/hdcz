@@ -18,13 +18,5 @@ class Member extends Model
 
     protected $name = 'member';
 
-    protected $append = [
-        "type_parent_names_text"
-    ];
-
-    public function getTypeParentNamesText($value, $data)
-    {
-        return getTypeParentNames($data['typecontrol_id']);
-    }
 }
 

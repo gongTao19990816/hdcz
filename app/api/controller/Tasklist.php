@@ -68,8 +68,13 @@ class Tasklist extends Common
     function task_uids()
     {
         $task_id = $this->request->get("tasklist_id");
-        $list = TaskUid::with(["member"])->where("tasklist_id", $task_id)->select()->toArray();
-        return $this->ajaxReturn($this->successCode, '返回成功', htmlOutList($list));
+        $list = TaskUid::where("tasklist_id", $task_id)->select()->toArray();
+        foreach ($list as &$item) {
+            $member = \app\api\model\Member::where("uid", $item['uid'])->field('avatar_thumb,uid,nickname,signature,phone_number,backups_name,typecontrol_id')->find()->toArray();
+            $member['type_parent_names_text'] = getTypeParentNames($member['typecontrol_id']);
+            $item['member'] = $member;
+        }
+        return $this->ajaxReturn($this->successCode, '返回成功', $list);
     }
 
     /**
