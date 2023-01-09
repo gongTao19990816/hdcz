@@ -809,11 +809,25 @@ class Member extends Common
         $uid_list = $params['uid_list'];//要修改的uid
         $old_typecontrol_id = $params['old_typecontrol_id'];//要修改的老分类
         $old_grouping_id = $params['old_grouping_id'];//要修改的老分组
-        $typecontrol_id = $params['typecontrol_id']; //需要修改的新分类
-        $grouping_id = $params['grouping_id'];//需要修改的新分组
-        $nickname = $params['nickname'];
-        $avatar_thumb = $params['avatar_thumb'];
-        $signature = $params['signature'];
+        $type_list = $params['type_list'];
+
+        if ($type_list) {
+            if (count($type_list)) {
+                throw new ValidateException('要修改项不能低于一种');
+            }
+            if (!in_array("nickname", $type_list)
+                && !in_array("avatar_thumb", $type_list)
+                && !in_array("signature", $type_list)
+                && !in_array("typecontrol_id", $type_list)
+                && !in_array("grouping_id", $type_list)) {
+                throw new ValidateException(['不明确的修改类型', ['type_list' => ['nickname', 'avatar_thumb', 'signature', 'grouping_id', 'typecontrol_id']]]);
+            }
+        }
+        $typecontrol_id = $type_list['typecontrol_id']; //需要修改的新分类
+        $grouping_id = $type_list['grouping_id'];//需要修改的新分组
+        $nickname = $type_list['nickname'];
+        $avatar_thumb = $type_list['avatar_thumb'];
+        $signature = $type_list['signature'];
         if (empty($uid_list) && (empty($old_typecontrol_id) && empty($old_grouping_id))) {
             throw new ValidateException('uidlist和分组分类二选一必传');
         }
@@ -824,9 +838,6 @@ class Member extends Common
         if ($old_typecontrol_id && $old_grouping_id) {
             $where['typecontrol_id'] = $old_typecontrol_id;
             $where['grouping_id'] = $old_grouping_id;
-        }
-        if (empty($typecontrol_id) && empty($grouping_id) && empty($nickname) && empty($avatar_thumb) && empty($signature)) {
-            throw new ValidateException('要修改项不能低于一种');
         }
 
         $members = db('member')->where($where)->field('uid,token,typecontrol_id')->select()->toArray();
