@@ -109,18 +109,18 @@ class Member extends Common
         foreach ($res['list'] as &$row) {
             $row['grouping_name'] = db('grouping')->where('grouping_id', $row['grouping_id'])->value('grouping_name');
             $row['type_title'] = db('typecontrol')->where('typecontrol_id', $row['typecontrol_id'])->value('type_title');
-            $arr = db('membervideo')->where('member_id', $row['member_id'])->field('sum(play_count) as play_num,sum(share_count) as share_count, sum(collect_count) as collect_count,sum(download_count) as download_count')->select()->toArray();
-            $row['play_num'] = $arr[0]['play_num']; //总播放数
-            $row['share_count'] = $arr[0]['share_count']; //总分享数
-            $row['collect_count'] = $arr[0]['collect_count']; //总收藏数
-            $row['download_count'] = $arr[0]['download_count']; //总下载数
+            $arr = db('membervideo')->where('member_id', $row['member_id'])->field('sum(play_count) as play_num,sum(share_count) as share_count, sum(collect_count) as collect_count,sum(download_count) as download_count')->find();
+            $row['play_num'] = $arr['play_num']; //总播放数
+            $row['share_count'] = $arr['share_count']; //总分享数
+            $row['collect_count'] = $arr['collect_count']; //总收藏数
+            $row['download_count'] = $arr['download_count']; //总下载数
             $row['updata_time'] = date("Y-m-d H:i:s", $row['updata_time']);
         }
         if ($where['grouping_id'] || $where['typecontrol_id']) {
-            $arrs = db('member')->where(['grouping_id' => $where['grouping_id'], 'typecontrol_id' => $where['typecontrol_id'], 'status' => 1])->field('sum(follower_status) as total_fans,sum(following_count) as total_follow')->select()->toArray();
+            $arrs = db('member')->where(['grouping_id' => $where['grouping_id'], 'typecontrol_id' => $where['typecontrol_id'], 'status' => 1])->field('sum(follower_status) as total_fans,sum(following_count) as total_follow')->find();
 
-            $res['total_fans'] = $arrs[0]['total_fans'];
-            $res['total_follow'] = $arrs[0]['total_follow'];
+            $res['total_fans'] = $arrs['total_fans'];
+            $res['total_follow'] = $arrs['total_follow'];
         }
         // $res['ifup'] = MemberModel::where('ifup',1)->count();
         // $this->UpMemberTime();
