@@ -21,9 +21,14 @@ class Job extends Common
         $redis = connectRedis();
         $task_details = [];
         foreach ($user as $k => $v) {
+            $uid_task['uid'] = $v['uid'];
+            $uid_task['tasklist_id'] = $uid_task;
+            $uid_task['num'] = 1;
+            $uid_id = db('task_uid')->insertGetId($uid_task);
             $v['proxy'] = getHttpProxy($v['uid']);
             $v['token'] = json_decode($v['token'], true);
             // var_dump(json_encode($v));die;
+            $adddata['task_uid_id'] = $uid_id;
             $adddata['parameter'] = $v;
             $adddata['create_time'] = time();
             $adddata['task_type'] = 'GetSelfUserInfo';
@@ -60,9 +65,14 @@ class Job extends Common
         $redis = connectRedis();
         $task_details = [];
         foreach ($user as $k => $v) {
+            $uid_task['uid'] = $v['uid'];
+            $uid_task['tasklist_id'] = $uid_task;
+            $uid_task['num'] = 1;
+            $uid_id = db('task_uid')->insertGetId($uid_task);
             $v['max_time'] = 0;
             $v['token'] = doToken('', 2);
             $v['proxy'] = getHttpProxy($v['token']['user']['uid']);
+            $adddata['task_uid_id'] = $uid_id;
             $adddata['parameter'] = $v;
             $adddata['create_time'] = time();
             $adddata['task_type'] = 'GetFansList';
@@ -99,10 +109,15 @@ class Job extends Common
         $redis = connectRedis();
         $task_details = [];
         foreach ($user as $k => $v) {
+            $uid_task['uid'] = $v['uid'];
+            $uid_task['tasklist_id'] = $uid_task;
+            $uid_task['num'] = 1;
+            $uid_id = db('task_uid')->insertGetId($uid_task);
             $v['max_time'] = 0;
             // var_dump($v);die;
             $v['token'] = doToken('', 2);
             $v['proxy'] = getHttpProxy($v['token']['user']['uid']);
+            $adddata['task_uid_id'] = $uid_id;
             $adddata['parameter'] = $v;
             $adddata['create_time'] = time();
             $adddata['task_type'] = 'GetFollowList';
@@ -137,10 +152,15 @@ class Job extends Common
         $redis = connectRedis();
         $task_details = [];
         foreach ($user as $k => $v) {
+            $uid_task['uid'] = $v['uid'];
+            $uid_task['tasklist_id'] = $usertask;
+            $uid_task['num'] = 1;
+            $uid_id = db('task_uid')->insertGetId($uid_task);
             $v['max_cursor'] = 0;
             // var_dump($v);die;
             $v['token'] = doToken('', 2);
             $v['proxy'] = getHttpProxy($v['token']['user']['uid']);
+            $adddata['task_uid_id']= $uid_id;
             $adddata['parameter'] = $v;
             $adddata['create_time'] = time();
             $adddata['task_type'] = 'GetAwemeList';
@@ -175,10 +195,15 @@ class Job extends Common
         $redis = connectRedis();
         $task_details = [];
         foreach ($user as $k => $v) {
+            $uid_task['uid'] = $v['uid'];
+            $uid_task['tasklist_id'] = $usertask;
+            $uid_task['num'] = 1;
+            $uid_id = db('task_uid')->insertGetId($uid_task);
             // $v['max_cursor'] = 0;
             // var_dump($v);die;
             $v['proxy'] = getHttpProxy($v['uid']);
             $v['token'] = json_decode($v['token'], true);
+            $adddata['task_uid_id'] = $uid_id;
             $adddata['parameter'] = $v;
             $adddata['create_time'] = time();
             $adddata['task_type'] = 'GetHomeVisitList';
