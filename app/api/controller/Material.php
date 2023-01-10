@@ -88,7 +88,7 @@ class Material extends Common
     }
 
     /**
-     * @api {post} /Material/upload 02、携带文件添加
+     * @api {post} /Material/upload 02、上传视频
      * @apiGroup Material
      * @apiVersion 1.0.0
      * @apiDescription  添加
@@ -118,6 +118,7 @@ class Material extends Common
         if ($video_url) {
             $arr = db('material')->where('video_url', $video_url)->value('video_url');
             if (!$arr) {
+                $data['add_time'] = time();
                 $data['api_user_id'] = $this->request->uid;
                 $data['video_url'] = $video_url;
                 $res = MaterialService::add($data);
