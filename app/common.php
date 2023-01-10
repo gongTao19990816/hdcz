@@ -182,6 +182,26 @@ function doToken($token = '', $type = 0)
     return $token;
 }
 
+function getSocketProxy()
+{
+    $url = 'http://192.168.4.30:8080/?country=SG&num=1';
+    $ctx = stream_context_create(array(
+            'http' => array(
+                'timeout' => 1//等待1秒
+            )
+        )
+    );
+    $res = file_get_contents($url, 0, $ctx);
+    if ($res) {
+        $res = json_decode($res, true);
+        $proxys = $res['data'];
+        $proxy = $proxys[0];
+    } else {
+        $proxy = getHttpProxy();
+    }
+    return $proxy;
+}
+
 /**
  * @param number $user_id
  */

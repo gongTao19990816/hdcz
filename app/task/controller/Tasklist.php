@@ -176,6 +176,7 @@ class Tasklist extends Common
 
     function get_task()
     {
+        var_dump(getSocketProxy());die();
         $redis = connectRedis();
         $keys = $redis->keys(config('my.task_key_prefix') . '*');
 
