@@ -60,7 +60,7 @@ class Tasklist extends Common
 
         $res = TasklistService::indexList($this->apiFormatWhere($where), $field, $orderby, $limit, $page);
         foreach ($res['list'] as &$row) {
-            $row['create_time '] = date("Y-m-d H:i:s", $row['create_time']);
+            $row['create_time'] = date("Y-m-d H:i:s", $row['create_time']);
         }
         return $this->ajaxReturn($this->successCode, '返回成功', htmlOutList($res));
     }
