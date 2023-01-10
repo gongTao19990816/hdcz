@@ -4,10 +4,15 @@ namespace app\api\controller;
 
 use app\api\middleware\Auth;
 use think\App;
+use think\Exception;
 use think\exception\FuncNotFoundException;
 use think\exception\HttpResponseException;
+use think\exception\ValidateException;
 use think\facade\Db;
+use think\facade\Filesystem;
 use think\facade\Log;
+use think\facade\Validate;
+use think\File;
 use think\Response;
 
 class Common
@@ -139,6 +144,46 @@ class Common
                 $this->auth->init($token);
             }
         }
+    }
+
+    function common_upload(File $file)
+    {
+        $upload_config_id = $this->request->param('upload_config_id', '', 'intval');
+
+        if (!Validate::fileExt($file, config('my.api_upload_ext')) || !Validate::fileSize($file, config('my.api_upload_max'))) {
+            throw new ValidateException('上传验证失败');
+        }
+        $upload_hash_status = !is_null(config('my.upload_hash_status')) ? config('my.upload_hash_status') : true;
+        $fileinfo = $upload_hash_status && db("file")->where('hash', $file->hash('md5'))->find();
+        if ($upload_hash_status && $fileinfo) {
+            throw new Exception('重复素材');
+        }
+        try {
+            if (config('my.oss_status')) {
+                $url = \utils\oss\OssService::OssUpload(['tmp_name' => $file->getPathname(), 'extension' => $file->extension()]);
+            } else {
+                $info = Filesystem::disk('temp')->putFile(\utils\oss\OssService::setFilepath(), $file, 'uniqid');
+
+
+                $cand = '/www/wwwroot/copy_file --src="' . app()->getRootPath() . 'public/upload_temp/' . $info . '" --output="' .
+                    app()->getRootPath() . 'public/uploads/uploadfiles/' . $info . '"';
+                system($cand);
+                unlink(app()->getRootPath() . 'public/upload_temp/' . $info);
+
+
+                $url = \utils\oss\OssService::getNewApiFileName(basename($info));
+                if ($upload_config_id && !config('my.oss_status') && in_array(pathinfo($info)['extension'], ['jpg', 'png', 'gif', 'jpeg', 'bmp'])) {
+                    $this->thumb(config('my.new_upload_dir') . '/' . $info, $upload_config_id);
+                }
+            }
+        } catch (\Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+
+        $upload_hash_status = is_null(config('my.upload_hash_status')) || config('my.upload_hash_status');
+        $upload_hash_status && db('file')->insert(['filepath' => $url, 'hash' => $file->hash('md5'), 'create_time' => time()]);
+
+        return $url;
     }
 
     /**

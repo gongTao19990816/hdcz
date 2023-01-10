@@ -10,8 +10,8 @@ namespace app\api\controller;
 
 use app\api\model\Material as MaterialModel;
 use app\api\service\MaterialService;
+use think\Exception;
 use think\exception\ValidateException;
-use think\facade\Validate;
 
 class Material extends Common
 {
@@ -71,17 +71,19 @@ class Material extends Common
 
         return $this->ajaxReturn($this->successCode, '返回成功', htmlOutList($res));
     }
+
     //统计数量
-    function countvideo(){
+    function countvideo()
+    {
         $typecontrol_id = $this->request->post('typecontrol_id');
         $grouping_id = $this->request->post('grouping_id');
-        if(empty($typecontrol_id) && empty($grouping_id)){
+        if (empty($typecontrol_id) && empty($grouping_id)) {
             throw new ValidateException('分类分组不能为空');
         }
-        $data =  MaterialModel::where(['typecontrol_id'=>$typecontrol_id,'grouping_id'=>$grouping_id])->count();
-        if($data){
+        $data = MaterialModel::where(['typecontrol_id' => $typecontrol_id, 'grouping_id' => $grouping_id])->count();
+        if ($data) {
             return $this->ajaxReturn($this->successCode, '返回成功', $data);
-        }else{
+        } else {
             throw new ValidateException('没有视频，请先上传视频到是素材库');
         }
 
@@ -101,20 +103,12 @@ class Material extends Common
         $postField = 'add_time,typecontrol_id,grouping_id';
         $data = $this->request->only(explode(',', $postField), 'post', null);
         $file = $this->request->file('file');
-        $upload_config_id = $this->request->param('upload_config_id', '', 'intval');
+        try {
+            $video_url = $this->common_upload($file);
+        } catch (Exception $e) {
+            return json(['status' => config('my.errorCode'), 'msg' => $e->getMessage()]);
+        }
 
-        if (!Validate::fileExt($file, config('my.api_upload_ext')) || !Validate::fileSize($file, config('my.api_upload_max'))) {
-            throw new ValidateException('上传验证失败');
-        }
-        $upload_hash_status = !is_null(config('my.upload_hash_status')) ? config('my.upload_hash_status') : true;
-        $fileinfo = $upload_hash_status ? db("file")->where('hash', $file->hash('md5'))->find() : false;
-        if ($upload_hash_status && $fileinfo) {
-            $url = $fileinfo['filepath'];
-            return json(['status' => config('my.errorCode'), 'msg' => '重复素材']);
-        } else {
-            $url = (new Base(app()))->new_up($file, $upload_config_id);
-            $video_url = $this->request->domain() . $url;
-        }
         if ($video_url) {
             $arr = db('material')->where('video_url', $video_url)->value('video_url');
             if (!$arr) {
@@ -129,7 +123,6 @@ class Material extends Common
 
         return $this->ajaxReturn($this->successCode, '新增成功');
     }
-
 
 
     /**
