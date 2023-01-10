@@ -185,7 +185,7 @@ class Member extends Common
         $usertask = db('tasklist')->insertGetId($addtask);
         $redis = connectRedis();
         // foreach ($user as $k => $v) {
-        $v['uid']  = $user['uid'];
+        $v['uid'] = $user['uid'];
         $v['proxy'] = getHttpProxy($user['uid']);
         $v['token'] = json_decode($user['token'], true);
         $v['text'] = $test;
@@ -215,6 +215,38 @@ class Member extends Common
         $arr = db('member')->where(['typecontrol_id' => 3, 'grouping_id' => 3])->field('token,uid')->select();
         var_dump(count($arr));
         die;
+    }
+
+    /**
+     * @api {post} /Member/check_refresh_update 检查是否能够刷新用户信息
+     * @apiGroup Member
+     * @apiVersion 1.0.0
+     * @apiDescription  检查是否能够刷新用户信息
+     * @apiHeader {String} Authorization 用户授权token
+     * @apiHeaderExample {json} Header-示例:
+     * "Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOjM2NzgsImF1ZGllbmNlIjoid2ViIiwib3BlbkFJZCI6MTM2NywiY3JlYXRlZCI6MTUzMzg3OTM2ODA0Nywicm9sZXMiOiJVU0VSIiwiZXhwIjoxNTM0NDg0MTY4fQ.Gl5L-NpuwhjuPXFuhPax8ak5c64skjDTCBC64N_QdKQ2VT-zZeceuzXB9TqaYJuhkwNYEhrV3pUx1zhMWG7Org"
+     * @apiParam (失败返回参数：) {object}        array 返回结果集
+     * @apiParam (失败返回参数：) {string}        array.status 返回错误码 201
+     * @apiParam (失败返回参数：) {string}        array.msg 返回错误消息
+     * @apiParam (成功返回参数：) {string}        array 返回结果集
+     * @apiParam (成功返回参数：) {string}        array.status 返回状态码 200
+     * @apiParam (成功返回参数：) {string}        array.msg 返回信息
+     * @apiSuccessExample {json} 01 成功示例
+     * {"status":"200","msg":"可以刷新"}
+     * @apiErrorExample {json} 02 失败示例
+     * {"status":" 201","msg":"任务正在进行"}
+     */
+    function check_refresh_update()
+    {
+        if (Cache::has('last_refresh_update_data')) {
+            $last = Cache::get('last_refresh_update_data');
+            $jg = (time() - $last['create_time']) < 1 * 60 * 60;
+            $sy = 1 * 60 * 60 - (time() - $last['create_time']);
+            if ($last['user_id'] == $this->request->uid && $jg) {
+                throw new ValidateException("任务正在进行");
+            }
+        }
+        return $this->ajaxReturn($this->successCode, '可以刷新');
     }
 
     /**
@@ -261,8 +293,8 @@ class Member extends Common
             $last = Cache::get('last_refresh_update_data');
             $jg = (time() - $last['create_time']) < 1 * 60 * 60;
             $sy = 1 * 60 * 60 - (time() - $last['create_time']);
-            if ($last['grouping_id'] == $where['grouping_id'] && $last['typecontrol_id'] == $where['typecontrol_id'] && $jg) {
-                throw new ValidateException("同一 `分组分类` 条件下手动刷新频繁，间隔时间剩余：" . $sy . " 秒");
+            if ($last['user_id'] == $this->request->uid && $jg) {
+                throw new ValidateException("手动刷新频繁，间隔时间剩余：" . $sy . " 秒");
             }
         }
 
@@ -281,7 +313,7 @@ class Member extends Common
             "complete_num" => 0
         ];
         $task_id = db("tasklist")->insertGetId($task);
-        Cache::set('last_refresh_update_data', ['grouping_id' => $where['grouping_id'], 'typecontrol_id' => $where['typecontrol_id'], 'create_time' => time(), 'task_id' => $task_id], 1 * 60 * 60);
+        Cache::set('last_refresh_update_data', ['user_id' => $this->request->uid, 'create_time' => time(), 'task_id' => $task_id], 1 * 60 * 60);
         echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
         $task_details = [];
