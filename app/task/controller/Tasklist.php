@@ -248,15 +248,15 @@ class Tasklist extends Common
         }*/
         //$tasklistdetail = db('tasklistdetail')->where('tasklistdetail_id', $tasklistdetail_id)->find();
         $tasklistdetail = TaskListDetail::where('tasklistdetail_id', $tasklistdetail_id)->find();
-        $task_uid = TaskUid::where('task_uid_id', $tasklistdetail['task_uid_id'])->field("task_uid_id,num")->find();
-        $uid_up_data = ['update_time' => time(), 'status' => 1];
-        if (in_array($tasklistdetail['task_type'], ["CollectionFans", "CollectionFollow", "Follow", "UpdateUserData"])) {
+        if ($tasklistdetail['task_uid_id']) {
+            $task_uid = TaskUid::where('task_uid_id', $tasklistdetail['task_uid_id'])->field("task_uid_id,num")->find();
+            $uid_up_data = ['update_time' => time(), 'status' => 1];
             $complete_num = db("tasklistdetail")->where(["task_uid_id" => $tasklistdetail['task_uid_id']])->count();
             if ($complete_num >= $task_uid->num) {
                 $uid_up_data['status'] = 2;
             }
+            $task_uid->save($uid_up_data);
         }
-        $task_uid->save($uid_up_data);
 
         if ($tasklistdetail['task_type'] == "PushVideo") {
             $redis = connectRedis();
