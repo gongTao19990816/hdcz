@@ -170,14 +170,18 @@ class Tasklist extends Common
 
     function has_task()
     {
-        echo json_encode(["code" => 200, "msg" => "有任务", "data" => ["task_num" => connectRedis()->lLen(config("my.task_key"))]]);
+        $redis = connectRedis();
+        $keys = $redis->keys(config('my.task_key_prefix') . '*');
+        $nums = 0;
+        foreach ($keys as $key) {
+            $nums += $redis->lLen($key);
+        }
+        echo json_encode(["code" => 200, "msg" => "有任务", "data" => ["task_num" => $nums]]);
         die();
     }
 
     function get_task()
     {
-        var_dump(getSocketProxy());
-        die();
         $redis = connectRedis();
         $keys = $redis->keys(config('my.task_key_prefix') . '*');
 
