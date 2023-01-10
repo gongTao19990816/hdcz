@@ -68,6 +68,7 @@ class TaskListDetail extends Common
             }else{
                 $row['complete_times'] = '-';
             }
+            $row['parameter'] = json_decode($row['parameter']);
 //            $row['userinfo'] = db('member')->where('uid',$row['crux'])->field('nickname,signature,avatar_thumb,backups_name,phone_number,typecontrol_id')->find();
 //            $row['type_title'] = getTypeParentNames($row['userinfo']['typecontrol_id']);
         }
