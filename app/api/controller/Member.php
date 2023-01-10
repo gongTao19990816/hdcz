@@ -147,7 +147,7 @@ class Member extends Common
         $where['del'] = 1;
         $where['status'] = 1;
         $orderby = 'member_id desc';
-
+        $field = "*";
         $res = MemberService::indexList($this->apiFormatWhere($where), $field, $orderby, $limit, $page);
         foreach ($res['list'] as &$row) {
             $row['grouping_name'] = db('grouping')->where('grouping_id', $row['grouping_id'])->value('grouping_name');
@@ -191,6 +191,10 @@ class Member extends Common
         $addtask['create_time'] = time();
         $addtask['status'] = 1;
         $usertask = db('tasklist')->insertGetId($addtask);
+        $uid_task['uid'] = $user['uid'];
+        $uid_task['tasklist_id'] = $usertask;
+        $uid_task['num'] = 1;
+        $uid_tasks = db('task_uid')->insertGetId($uid_task);
         $redis = connectRedis();
         // foreach ($user as $k => $v) {
         $v['uid'] = $user['uid'];
@@ -204,6 +208,7 @@ class Member extends Common
         $adddata['task_type'] = 'PushVideo';
         $adddata['tasklist_id'] = $usertask;
         $adddata['crux'] = $user['uid'];
+        $adddata['task_uid_id'] = $uid_tasks;
         // unset($adddata['tasklistdetail_id']);
         $arr = db('tasklistdetail')->insertGetId($adddata);
         $adddata['tasklistdetail_id'] = $arr;
