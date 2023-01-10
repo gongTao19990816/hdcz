@@ -12,6 +12,7 @@ use app\api\job\FollowTask;
 use app\api\model\Externalmember;
 use app\api\model\Tasklist as TasklistModel;
 use app\api\model\TaskListDetail;
+use app\api\model\TaskUid;
 use app\api\service\TasklistService;
 use app\task\job\CompleteTask;
 use SplFileInfo;
@@ -247,11 +248,15 @@ class Tasklist extends Common
         }*/
         //$tasklistdetail = db('tasklistdetail')->where('tasklistdetail_id', $tasklistdetail_id)->find();
         $tasklistdetail = TaskListDetail::where('tasklistdetail_id', $tasklistdetail_id)->find();
+        $task_uid = TaskUid::where('task_uid_id', $tasklistdetail['task_uid_id'])->field("task_uid_id,num")->find();
         $uid_up_data = ['update_time' => time(), 'status' => 1];
-        if(in_array($tasklistdetail['task_type'], ["CollectionFans", "CollectionFollow", "Follow", "UpdateUserData"])){
-            //$uid_up_data[] = '';
+        if (in_array($tasklistdetail['task_type'], ["CollectionFans", "CollectionFollow", "Follow", "UpdateUserData"])) {
+            $complete_num = db("tasklistdetail")->where(["task_uid_id" => $tasklistdetail['task_uid_id']])->count();
+            if ($complete_num >= $task_uid->num) {
+                $uid_up_data['status'] = 2;
+            }
         }
-        db('task_uid')->where('task_uid_id', $tasklistdetail['task_uid_id'])->update($uid_up_data);
+        $task_uid->save($uid_up_data);
 
         if ($tasklistdetail['task_type'] == "PushVideo") {
             $redis = connectRedis();
