@@ -92,23 +92,29 @@ class Member extends Common
         $limit = $this->request->post('limit', 20, 'intval');
         $page = $this->request->post('page', 1, 'intval');
         $where = [];
-        $where['uid'] = $this->request->post('uid', '', 'serach_in');
-        $where['grouping_id'] = $this->request->post('grouping_id', '', 'serach_in');
-        $where['typecontrol_id'] = $this->request->post('typecontrol_id', '', 'serach_in');
+        $where['a.uid'] = $this->request->post('uid', '', 'serach_in');
+        $where['a.grouping_id'] = $this->request->post('grouping_id', '', 'serach_in');
+        $where['a.typecontrol_id'] = $this->request->post('typecontrol_id', '', 'serach_in');
         $where['del'] = 1;
         // $where['api_user_id'] = $this->request->uid;
         $max = $this->request->post('max');
         $min = $this->request->post('min');
-        $where['follower_status'] = ['between', [$min, $max]];
+        if ($min && $max) {
+            $where['follower_status'] = ['between', [$min, $max]];
+        }
         $field = '*';
         $order = $this->request->post('order', '', 'serach_in');
         $sort = $this->request->post('sort', '', 'serach_in');
         $orderby = ($order && $sort) ? $order . ' ' . $sort : 'status desc';
 
-        $res = MemberService::indexList($this->apiFormatWhere($where, MemberModel::class), $field, $orderby, $limit, $page);
+        $resp = \app\api\model\Member::alias('a')->join('grouping b', 'b.grouping_id = a.grouping_id')
+            ->join('typecontrol c', 'c.typecontrol_id = a.typecontrol_id')
+            ->where($this->apiFormatWhere($where, MemberModel::class))->field('a.*,b.grouping_name,c.type_title')->order($orderby)->paginate(['list_rows' => $limit, 'page' => $page])->toArray();
+        $res = ['list' => $resp['data'], 'count' => $resp['total']];
+//         $res = MemberService::indexList($this->apiFormatWhere($where, MemberModel::class), $field, $orderby, $limit, $page);
         foreach ($res['list'] as &$row) {
-            $row['grouping_name'] = db('grouping')->where('grouping_id', $row['grouping_id'])->value('grouping_name');
-            $row['type_title'] = db('typecontrol')->where('typecontrol_id', $row['typecontrol_id'])->value('type_title');
+//            $row['grouping_name'] = db('grouping')->where('grouping_id', $row['grouping_id'])->value('grouping_name');
+//            $row['type_title'] = db('typecontrol')->where('typecontrol_id', $row['typecontrol_id'])->value('type_title');
             $arr = db('membervideo')->where('member_id', $row['member_id'])->field('sum(play_count) as play_num,sum(share_count) as share_count, sum(collect_count) as collect_count,sum(download_count) as download_count')->find();
             $row['play_num'] = $arr['play_num']; //总播放数
             $row['share_count'] = $arr['share_count']; //总分享数
@@ -234,7 +240,7 @@ class Member extends Common
      * @apiParam (成功返回参数：) {string}        array.status 返回状态码 200
      * @apiParam (成功返回参数：) {string}        array.msg 返回信息
      * @apiSuccessExample {json} 01 成功示例
-     * {"status":"200","msg":"获取成功","data":1 or 0}
+     * {"status":"200","msg":"获取成功","data":true or false}
      */
     function auto_follow_status()
     {
