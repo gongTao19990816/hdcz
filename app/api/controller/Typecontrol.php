@@ -189,14 +189,13 @@ class Typecontrol extends Common
 
     function kylistnum()
     {
-        $typecontrol_id = $this->request->post('typecontrol_id', '', 'serach_in');
-        $grouping_id = $this->request->post('grouping_id', '', 'serach_in');
+        $typecontrol_id = $this->request->post('typecontrol_id');
+        $grouping_id = $this->request->post('grouping_id');
         if (empty($typecontrol_id) && empty($grouping_id)) {
             throw new ValidateException('参数错误');
         }
         $where['typecontrol_id'] = $typecontrol_id;
         $where['grouping_id'] = $grouping_id;
-//        $where['status'] = 1;
         $nick = db('nickname')->where($where)->count();
         $nc = db('autograph')->where($where)->count();
         $tx = db('headimage')->where($where)->count();
