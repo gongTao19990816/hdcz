@@ -25,7 +25,10 @@ class TaskExpire
 
     function doJob($taskdetail_id)
     {
-        TaskListDetail::where('taskdetail_id', $taskdetail_id)->save(['status' => TaskListDetail::$expireCode]);
+        $detail = TaskListDetail::where('taskdetail_id', $taskdetail_id)->find();
+        if ($detail->status != TaskListDetail::$successCode && $detail->status != TaskListDetail::$failCode) {
+            $detail->save(['status' => TaskListDetail::$expireCode]);
+        }
         return true;
     }
 }
