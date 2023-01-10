@@ -28,9 +28,12 @@ class TaskListDetail extends Model
 
     /**
      * 添加的时候设置过期时间60秒
-    */
+     */
     static function add($taskdetaildata)
     {
+        if (is_array($taskdetaildata['parameter'])) {
+            $taskdetaildata['parameter'] = json_encode($taskdetaildata['parameter']);
+        }
         $taskdetail = new self();
         $taskdetail->save($taskdetaildata);
         queue(\app\api\job\TaskExpire::class, $taskdetail->tasklistadetail_id, 60);
