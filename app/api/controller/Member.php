@@ -185,6 +185,7 @@ class Member extends Common
         $usertask = db('tasklist')->insertGetId($addtask);
         $redis = connectRedis();
         // foreach ($user as $k => $v) {
+        $v['uid']  = $user['uid'];
         $v['proxy'] = getHttpProxy($user['uid']);
         $v['token'] = json_decode($user['token'], true);
         $v['text'] = $test;
