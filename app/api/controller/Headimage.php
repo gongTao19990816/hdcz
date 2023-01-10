@@ -10,7 +10,9 @@ namespace app\api\controller;
 
 use app\api\model\Headimage as HeadimageModel;
 use app\api\service\HeadimageService;
+use app\api\service\MaterialService;
 use think\exception\ValidateException;
+use think\facade\Validate;
 
 class Headimage extends Common
 {
@@ -63,19 +65,45 @@ class Headimage extends Common
         return $this->ajaxReturn($this->successCode, '返回成功', htmlOutList($res));
     }
 
-    function inspectdata()
+    /**
+     * @api {post} /Material/upload 02、上传头像
+     * @apiGroup Material
+     * @apiVersion 1.0.0
+     * @apiDescription  添加
+     * @apiParam (输入参数：) {string}            typecontrol_id 视频类型
+     * @apiParam (输入参数：) {file}              file 视频文件
+     * @apiParam (输入参数：) {int}               grouping_id 分组
+     */
+    function upload()
     {
-        $where['status'] = 2;
-        $arr = db('headimage')->where($where)->select()->toArray();
-        if ($arr) {
-            foreach ($arr as &$row) {
-                if ($row['usage_time'] + 3600 < time()) {
-                    $upda['status'] = 1;
-                    $upda['usage_time'] = 0;
-                    HeadimageModel::where('headimage_id', $row['headimage_id'])->update($upda);
-                }
+        $postField = 'add_time,typecontrol_id,grouping_id';
+        $data = $this->request->only(explode(',', $postField), 'post', null);
+        $file = $this->request->file('file');
+        $upload_config_id = $this->request->param('upload_config_id', '', 'intval');
+
+        if (!Validate::fileExt($file, config('my.api_upload_ext')) || !Validate::fileSize($file, config('my.api_upload_max'))) {
+            throw new ValidateException('上传验证失败');
+        }
+        $upload_hash_status = !is_null(config('my.upload_hash_status')) ? config('my.upload_hash_status') : true;
+        $fileinfo = $upload_hash_status ? db("file")->where('hash', $file->hash('md5'))->find() : false;
+        if ($upload_hash_status && $fileinfo) {
+            $url = $fileinfo['filepath'];
+            return json(['status' => config('my.errorCode'), 'msg' => '重复素材']);
+        } else {
+            $url = (new Base(app()))->new_up($file, $upload_config_id);
+            $video_url = $this->request->domain() . $url;
+        }
+        if ($video_url) {
+            $arr = db('headimage')->where('image', $video_url)->value('image');
+            if (!$arr) {
+                $data['add_time'] = time();
+                $data['api_user_id'] = $this->request->uid;
+                $data['image'] = $video_url;
+                $res = MaterialService::add($data);
             }
         }
+
+        return $this->ajaxReturn($this->successCode, '新增成功');
     }
 
     /**
