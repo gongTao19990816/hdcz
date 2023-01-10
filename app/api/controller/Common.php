@@ -151,12 +151,12 @@ class Common
         $upload_config_id = $this->request->param('upload_config_id', '', 'intval');
 
         if (!Validate::fileExt($file, config('my.api_upload_ext')) || !Validate::fileSize($file, config('my.api_upload_max'))) {
-            throw new ValidateException('上传验证失败');
+            throw new \Exception('上传验证失败');
         }
         $upload_hash_status = !is_null(config('my.upload_hash_status')) ? config('my.upload_hash_status') : true;
         $fileinfo = $upload_hash_status && db("file")->where('hash', $file->hash('md5'))->find();
         if ($upload_hash_status && $fileinfo) {
-            throw new Exception('重复素材');
+            throw new \Exception('重复素材');
         }
         try {
             if (config('my.oss_status')) {
@@ -177,7 +177,7 @@ class Common
                 }
             }
         } catch (\Exception $e) {
-            throw new Exception($e->getMessage());
+            throw new \Exception($e->getMessage());
         }
 
         $upload_hash_status = is_null(config('my.upload_hash_status')) || config('my.upload_hash_status');

@@ -105,7 +105,7 @@ class Material extends Common
         $file = $this->request->file('file');
         try {
             $video_url = $this->common_upload($file);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return json(['status' => config('my.errorCode'), 'msg' => $e->getMessage()]);
         }
 
