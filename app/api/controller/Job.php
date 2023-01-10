@@ -250,5 +250,79 @@ class Job extends Common
         }
     }
 
+    //循环获取设备是否存在
+    function shebei()
+    {
+        // flushRequest();
+        for ($i = 0; $i < 255; $i++) {
+            echo $i;
+            $url = "http://192.168.4." . $i . ":8081/exist";
+            $data = json_decode(file_get_contents($url, true), true);
+            //  var_dump($data);die;
+            if ($data) {
+                $indata['deviceip'] = "192.168.4." . $i;
+                db('equipment')->insert($indata);
+            }
+            //  var_dump($data);die;
+
+        }
+    }
+
+    //循环的读取设备里面的token
+    function num()
+    {
+        // flushRequest();
+        $arr = db('equipment')->limit(2)->field('deviceip')->select()->toArray();
+        foreach ($arr as $k => $v) {
+            $url = "http://" . $v['deviceip'] . ":8081/backupList?app=TikTok";
+            // var_dump($url);die;
+            $data = json_decode(file_get_contents($url, true), true);
+            foreach ($data['backupArray'] as $key => $val) {
+                $urls = "http://" . $v['deviceip'] . ":8081/userToken?app=TikTok&filename=" . $val['name'];
+                $datas = json_decode(file_get_contents($urls, true), true);
+                $addtoken = $this->AddMemberToken($datas, $val['name'], '内部设备');
+                // var_dump($addtoken);die;
+            }
+            // var_dump();
+        }
+    }
+    // token入库
+    function AddMemberToken($data, $backups_name, $phone_number)
+    {
+        $data = $data;
+        // $getdata = $this->request->get();
+
+        $gjtype = explode('=', $data['common-params']);
+        $gj = explode('&', $gjtype[1]);
+// 		var_dump($gj[0]);die;
+        // if (empty($data)) {
+        //     throw new ValidateException('参数错误');
+        // }
+        $token_str = str_replace('&quot;', '"', $data);
+        $token_str = str_replace('&amp;', '&', $token_str);
+        // var_dump($token_str);die;
+        $arr['token'] = json_encode($token_str);
+        $arr['backups_name'] = $backups_name;
+        $arr['phone_number'] = $phone_number;
+        $arr['uid'] = $data['user']['uid'];
+        $arr['sec_uid'] = $data['user']['sec_uid'];
+        $arr['country'] = $this->transCountryCode($gj[0]);
+
+        $memberinfo = db('member')->where('uid', $data['user']['uid'])->find();
+        if ($memberinfo) {
+            $res = db('member')->where('uid', $data['user']['uid'])->update($arr);
+            $msg = '更新成功' . $arr['uid'];
+        } else {
+            $arr['addtime'] = time();
+            $arr['grouping_id'] = 3;
+            $arr['ifpic'] = 0;
+            $arr['typecontrol_id'] = 3;
+            $res = db('member')->insert($arr);
+            $msg = '添加成功';
+            // $this->GetMemberInfo($arr['uid']);
+        }
+        return $msg;
+    }
+
 
 }
