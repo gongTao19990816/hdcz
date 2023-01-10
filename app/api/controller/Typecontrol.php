@@ -187,6 +187,7 @@ class Typecontrol extends Common
         return $this->ajaxReturn($this->successCode, '操作成功');
     }
 
+
     function kylistnum()
     {
         $typecontrol_id = $this->request->post('typecontrol_id');
