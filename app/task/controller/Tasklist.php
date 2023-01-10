@@ -180,7 +180,10 @@ class Tasklist extends Common
 
         if ($keys && count($keys)) {
             $key = $keys[0];
-            return json_encode(['status' => $this->successCode, 'msg' => '领取成功', 'data' => json_decode($redis->rpop($key), true)]);
+            $data = $redis->rpop($key);
+            db('tasklistdetail')->where('tasklistdetail_id', $data['tasklistdetail_id'])->update(["status" => 3, "receive_time" => time()]);
+            db('task_uid')->where('task_uid_id', $data['task_uid_id'])->update(['update_time' => time()]);
+            return json_encode(['status' => $this->successCode, 'msg' => '领取成功', 'data' => json_decode($data, true)]);
         } else {
             return json_encode(['status' => $this->errorCode, 'msg' => '没有任务了']);
         }
@@ -193,6 +196,7 @@ class Tasklist extends Common
         }
         die();*/
     }
+
 
     function iftask()
     {
@@ -243,6 +247,11 @@ class Tasklist extends Common
         }*/
         //$tasklistdetail = db('tasklistdetail')->where('tasklistdetail_id', $tasklistdetail_id)->find();
         $tasklistdetail = TaskListDetail::where('tasklistdetail_id', $tasklistdetail_id)->find();
+        $uid_up_data = ['update_time' => time(), 'status' => 1];
+        if(in_array($tasklistdetail['task_type'], ["CollectionFans", "CollectionFollow", "Follow", "UpdateUserData"])){
+            //$uid_up_data[] = '';
+        }
+        db('task_uid')->where('task_uid_id', $tasklistdetail['task_uid_id'])->update($uid_up_data);
 
         if ($tasklistdetail['task_type'] == "PushVideo") {
             $redis = connectRedis();
@@ -1127,11 +1136,9 @@ class Tasklist extends Common
             // var_dump($v['author']['uid']);die;
             $insert['aweme_id'] = $v['aweme_id'];
             $insert['comment_count'] = $v['statistics']['comment_count']; //评论数量
-            $insert['digg_count'] = $v['statistics']['digg_count']; //点赞数
+            $insert['digg_count'] = $v['statistics']['digg_count'];
             $insert['share_count'] = $v['statistics']['share_count']; //分享数量
             $insert['play_count'] = $v['statistics']['play_count']; //播放数量
-            $insert['collect_count'] = $v['statistics']['collect_count']; //收藏数量
-            $insert['download_count'] = $v['statistics']['download_count']; //下载数量
             $insert['video_desc'] = $v['desc'];
             $video = $v['video']; //视频数组
             $insert['video_url'] = $v['video']['play_addr']['url_list'][0]; //视频地址
@@ -1218,11 +1225,9 @@ class Tasklist extends Common
         $insert['member_id'] = $member_id;
         $insert['aweme_id'] = $data['aweme']['aweme_id'];
         $insert['comment_count'] = 0; //评论数量
-        $insert['digg_count'] = 0; //点赞数
+        $insert['digg_count'] = 0;
         $insert['share_count'] = 0; //分享数量
         $insert['play_count'] = 0; //播放数量
-        $insert['collect_count'] = 0; //收藏数量
-        $insert['download_count'] = 0; //下载数量
         $insert['video_desc'] = $data['aweme']['desc'];
         $insert['video_url'] = $data['aweme']['video']['play_addr']['url_list'][0]; //视频地址
         $insert['video_pic_url'] = $data['aweme']['video']['cover']['url_list'][0];

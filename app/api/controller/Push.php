@@ -251,7 +251,7 @@ class Push extends Common
             $uid_task['uid'] = $member['uid'];
             $uid_task['tasklist_id'] = $task_id;
             $uid_task['num'] = $params['user_chat_upper_limit'];
-            db('task_uid')->insert($uid_task);
+            $uid_id = db('task_uid')->insertGetId($uid_task);
             if ($total_task_num) {
                 for ($i = 0; $i < $params['user_chat_upper_limit']; $i++) {
                     // 从查询出来的评论列表随机取一个评论，并从评论列表删除
@@ -288,6 +288,7 @@ class Push extends Common
                         ];
                         $task_detail = [
                             "tasklist_id" => $task_id,
+                            'task_uid_id' => $uid_id,
                             "parameter" => $parameter,
                             "status" => 1,
                             "create_time" => time(),
@@ -437,7 +438,7 @@ class Push extends Common
             $uid_task['uid'] = $member['uid'];
             $uid_task['tasklist_id'] = $task_id;
             $uid_task['num'] = $user_follow_upper_limit;
-            db('task_uid')->insert($uid_task);
+            $uid_id = db('task_uid')->insertGetId($uid_task);
             for ($i = 0; $i < ($user_follow_upper_limit - $member['today_follow_num']); $i++) {
                 if ($external_members) {
                     $delay = rand($params['rate_min'], $params['rate_max']); //关注频率，延迟多少秒执行
@@ -463,6 +464,7 @@ class Push extends Common
                         ];
                         $task_detail = [
                             "tasklist_id" => $task_id,
+                            'task_uid_id' => $uid_id,
                             "parameter" => $parameter,
                             "status" => 1,
                             "create_time" => time(),
@@ -580,7 +582,7 @@ class Push extends Common
             $uid_task['uid'] = $member['uid'];
             $uid_task['tasklist_id'] = $task_id;
             $uid_task['num'] = $user_digg_upper_limit;
-            db('task_uid')->insertGetId($uid_task);
+            $uid_id = db('task_uid')->insertGetId($uid_task);
             if ($comment_list) {
                 for ($i = 0; $i < $user_digg_upper_limit; $i++) {
                     // 从查询出来的评论列表随机取一个评论，并从评论列表删除
@@ -601,6 +603,7 @@ class Push extends Common
                     ];
                     $task_detail = [
                         "tasklist_id" => $task_id,
+                        'task_uid_id' => $uid_id,
                         "parameter" => $parameter,
                         "status" => 1,
                         "create_time" => time(),
@@ -723,7 +726,7 @@ class Push extends Common
             $uid_task['uid'] = $uid['uid'];
             $uid_task['tasklist_id'] = $task_id;
             $uid_task['num'] = $video_num;
-            db('task_uid')->insert($uid_task);
+            $uid_id = db('task_uid')->insertGetId($uid_task);
             //取登录后的token
 //            $user_info = db('member')->field('token')->where(['uid' => $uid, 'status' => 1])->find();
 //            if (empty($user_info)) continue;
@@ -763,6 +766,7 @@ class Push extends Common
                 $parameter = ["video_url" => $video_url, "text" => $text, "uid" => $uid['uid'], "token" => $token, "proxy" => $proxy];
                 $task_detail = [
                     "tasklist_id" => $task_id,
+                    'task_uid_id' => $uid_id,
                     "parameter" => $parameter,
                     "status" => 1,
                     "api_user_id" => $this->request->uid,
