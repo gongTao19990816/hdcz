@@ -49,20 +49,27 @@ class TaskListDetail extends Common
         $page = $this->request->post('page', 1, 'intval');
 
         $where = [];
-        $where['status'] = $this->request->post('status', '', 'serach_in');
+//        $where['status'] = $this->request->post('status', '', 'serach_in');
         $where['tasklist_id'] = $this->request->post('tasklist_id', '', 'serach_in');
-
+        $where['crux'] = $this->request->post("uid");
         $field = '*';
         $orderby = 'tasklistdetail_id desc';
 
         $res = TaskListDetailService::indexList($this->apiFormatWhere($where), $field, $orderby, $limit, $page);
         foreach ($res['list'] as &$row) {
-            $row['receive_time'] = date("Y-m-d H:i:s", $row['receive_time']);
-            $row['create_time'] = date("Y-m-d H:i:s", $row['create_time']);
-            $row['complete_time'] = date("Y-m-d H:i:s", $row['complete_time']);
-            $row['userinfo'] = db('member')->where('uid',$row['crux'])->field('nickname,signature,avatar_thumb,backups_name,phone_number,typecontrol_id')->find();
-            $row['type_title'] = getTypeParentNames($row['userinfo']['typecontrol_id']);
-
+            $row['create_times'] = date("Y-m-d H:i:s", $row['create_time']);
+            if($row['receive_time'] == 0){
+                $row['receive_times'] = '-';
+            }else{
+                $row['receive_times'] = date("Y-m-d H:i:s", $row['receive_time']);
+            }
+            if($row['complete_time']){
+                $row['complete_times'] = date("Y-m-d H:i:s", $row['complete_time']);
+            }else{
+                $row['complete_times'] = '-';
+            }
+//            $row['userinfo'] = db('member')->where('uid',$row['crux'])->field('nickname,signature,avatar_thumb,backups_name,phone_number,typecontrol_id')->find();
+//            $row['type_title'] = getTypeParentNames($row['userinfo']['typecontrol_id']);
         }
         return $this->ajaxReturn($this->successCode, '返回成功', htmlOutList($res));
     }
