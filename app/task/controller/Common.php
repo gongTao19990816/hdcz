@@ -24,7 +24,7 @@ class Common
     public function __construct(App $app)
     {
         $redis = connectRedis();
-        $keys = $redis->keys(config('my.task_key_prefix') . '*');
+        $keys = $redis->keys(\app\api\model\Tasklist::$task_key_prefix . '*');
 
         if ($keys && count($keys)) {
             $key = $keys[0];

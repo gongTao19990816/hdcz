@@ -17,7 +17,7 @@ class Tasklist extends Model
     protected $pk = 'tasklist_id';
 
     protected $name = 'tasklist';
-
+    public static $task_key_prefix = "task:";
 
 }
 

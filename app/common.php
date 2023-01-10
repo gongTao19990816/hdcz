@@ -24,7 +24,8 @@ error_reporting(0);
  */
 function get_task_key(string $middle): string
 {
-    return config('my.task_key_prefix') . $middle . '_' . uniqid();
+    $middle = str_replace('_', ':', $middle);
+    return \app\api\model\Tasklist::$task_key_prefix . $middle . ':' . uniqid();
 }
 
 function create_uuid($prefix = "")
