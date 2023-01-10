@@ -79,20 +79,12 @@ class Headimage extends Common
         $postField = 'add_time,typecontrol_id,grouping_id';
         $data = $this->request->only(explode(',', $postField), 'post', null);
         $file = $this->request->file('file');
-        $upload_config_id = $this->request->param('upload_config_id', '', 'intval');
+        try {
+            $video_url = $this->common_upload($file);
+        } catch (\Exception $e) {
+            return json(['status' => config('my.errorCode'), 'msg' => $e->getMessage()]);
+        }
 
-        if (!Validate::fileExt($file, config('my.api_upload_ext')) || !Validate::fileSize($file, config('my.api_upload_max'))) {
-            throw new ValidateException('上传验证失败');
-        }
-        $upload_hash_status = !is_null(config('my.upload_hash_status')) ? config('my.upload_hash_status') : true;
-        $fileinfo = $upload_hash_status ? db("file")->where('hash', $file->hash('md5'))->find() : false;
-        if ($upload_hash_status && $fileinfo) {
-            $url = $fileinfo['filepath'];
-            return json(['status' => config('my.errorCode'), 'msg' => '重复素材']);
-        } else {
-            $url = (new Base(app()))->new_up($file, $upload_config_id);
-            $video_url = $this->request->domain() . $url;
-        }
         if ($video_url) {
             $arr = db('headimage')->where('image', $video_url)->value('image');
             if (!$arr) {

@@ -109,16 +109,18 @@ class Member extends Common
         foreach ($res['list'] as &$row) {
             $row['grouping_name'] = db('grouping')->where('grouping_id', $row['grouping_id'])->value('grouping_name');
             $row['type_title'] = db('typecontrol')->where('typecontrol_id', $row['typecontrol_id'])->value('type_title');
-            $row['play_num'] = db('membervideo')->where('member_id', $row['member_id'])->sum('play_count'); //总播放数
-            $row['share_count'] = db('membervideo')->where('member_id', $row['member_id'])->sum('share_count'); //总分享数
-            $row['collect_count'] = db('membervideo')->where('member_id', $row['member_id'])->sum('collect_count'); //总收藏数
-            $row['download_count'] = db('membervideo')->where('member_id', $row['member_id'])->sum('download_count'); //总下载数
-            // $row['pro_type'] = '项目分类';
+            $arr = db('membervideo')->where('member_id', $row['member_id'])->field('sum(play_count) as play_num,sum(share_count) as share_count, sum(collect_count) as collect_count,sum(download_count) as download_count')->select()->toArray();
+            $row['play_num'] = $arr[0]['play_num']; //总播放数
+            $row['share_count'] = $arr[0]['share_count']; //总分享数
+            $row['collect_count'] = $arr[0]['collect_count']; //总收藏数
+            $row['download_count'] = $arr[0]['download_count']; //总下载数
             $row['updata_time'] = date("Y-m-d H:i:s", $row['updata_time']);
         }
         if ($where['grouping_id'] || $where['typecontrol_id']) {
-            $res['total_fans'] = db('member')->where(['grouping_id' => $where['grouping_id'], 'typecontrol_id' => $where['typecontrol_id']])->sum('follower_status');
-            $res['total_follow'] = db('member')->where(['grouping_id' => $where['grouping_id'], 'typecontrol_id' => $where['typecontrol_id']])->sum('following_count');
+            $arrs = db('member')->where(['grouping_id' => $where['grouping_id'], 'typecontrol_id' => $where['typecontrol_id'],'status'=>1])->field('sum(follower_status) as total_fans,sum(following_count) as total_follow')->select()->toArray();
+
+            $res['total_fans'] = $arrs[0]['total_fans'];
+            $res['total_follow'] = $arrs[0]['total_follow'];
         }
         // $res['ifup'] = MemberModel::where('ifup',1)->count();
         // $this->UpMemberTime();
@@ -218,7 +220,7 @@ class Member extends Common
     }
 
     /**
-     * @api {post} /Member/check_refresh_update 检查是否能够刷新用户信息
+     * @api {post} /Member/check_refresh_update 01、检查是否能够刷新用户信息
      * @apiGroup Member
      * @apiVersion 1.0.0
      * @apiDescription  检查是否能够刷新用户信息
@@ -250,7 +252,7 @@ class Member extends Common
     }
 
     /**
-     * @api {post} /Member/refresh_update 手动更新分组分类下的账号数据
+     * @api {post} /Member/refresh_update 01、手动更新分组分类下的账号数据
      * @apiGroup Member
      * @apiVersion 1.0.0
      * @apiDescription  手动更新分组分类下的账号数据
