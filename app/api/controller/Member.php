@@ -141,7 +141,7 @@ class Member extends Common
         $where['del'] = 1;
         $where['status'] = 1;
         $orderby = 'member_id desc';
-
+        $field = "*";
         $res = MemberService::indexList($this->apiFormatWhere($where), $field, $orderby, $limit, $page);
         foreach ($res['list'] as &$row) {
             $row['grouping_name'] = db('grouping')->where('grouping_id', $row['grouping_id'])->value('grouping_name');
