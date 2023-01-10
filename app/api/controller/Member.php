@@ -201,6 +201,7 @@ class Member extends Common
         $adddata['parameter'] = json_decode($adddata['parameter'], true);
         $redis->lPush($redis_key, json_encode($adddata));
         // }
+        return $this->ajaxReturn($this->successCode, '操作成功');
     }
 
 
