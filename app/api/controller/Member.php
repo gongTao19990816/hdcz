@@ -117,7 +117,7 @@ class Member extends Common
             $row['updata_time'] = date("Y-m-d H:i:s", $row['updata_time']);
         }
         if ($where['grouping_id'] || $where['typecontrol_id']) {
-            $arrs = db('member')->where(['grouping_id' => $where['grouping_id'], 'typecontrol_id' => $where['typecontrol_id'],'status'=>1])->field('sum(follower_status) as total_fans,sum(following_count) as total_follow')->select()->toArray();
+            $arrs = db('member')->where(['grouping_id' => $where['grouping_id'], 'typecontrol_id' => $where['typecontrol_id'], 'status' => 1])->field('sum(follower_status) as total_fans,sum(following_count) as total_follow')->select()->toArray();
 
             $res['total_fans'] = $arrs[0]['total_fans'];
             $res['total_follow'] = $arrs[0]['total_follow'];
@@ -220,6 +220,88 @@ class Member extends Common
     }
 
     /**
+     * @api {post} /Member/auto_follow_status 01、获取自动回关状态
+     * @apiGroup Member
+     * @apiVersion 1.0.0
+     * @apiDescription  获取自动回关状态
+     * @apiHeader {String} Authorization 用户授权token
+     * @apiHeaderExample {json} Header-示例:
+     * "Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOjM2NzgsImF1ZGllbmNlIjoid2ViIiwib3BlbkFJZCI6MTM2NywiY3JlYXRlZCI6MTUzMzg3OTM2ODA0Nywicm9sZXMiOiJVU0VSIiwiZXhwIjoxNTM0NDg0MTY4fQ.Gl5L-NpuwhjuPXFuhPax8ak5c64skjDTCBC64N_QdKQ2VT-zZeceuzXB9TqaYJuhkwNYEhrV3pUx1zhMWG7Org"
+     * @apiParam (失败返回参数：) {object}        array 返回结果集
+     * @apiParam (失败返回参数：) {string}        array.status 返回错误码 201
+     * @apiParam (失败返回参数：) {string}        array.msg 返回错误消息
+     * @apiParam (成功返回参数：) {string}        array 返回结果集
+     * @apiParam (成功返回参数：) {string}        array.status 返回状态码 200
+     * @apiParam (成功返回参数：) {string}        array.msg 返回信息
+     * @apiSuccessExample {json} 01 成功示例
+     * {"status":"200","msg":"获取成功","data":1 or 0}
+     */
+    function auto_follow_status()
+    {
+        $key = "auto_follow_" . $this->request->uid;
+        return $this->ajaxReturn($this->successCode, '获取成功', Cache::has($key));
+    }
+
+    /**
+     * @api {post} /Member/auto_follow_on 01、自动回关开启
+     * @apiGroup Member
+     * @apiVersion 1.0.0
+     * @apiDescription  自动回关开启
+     * @apiHeader {String} Authorization 用户授权token
+     * @apiHeaderExample {json} Header-示例:
+     * "Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOjM2NzgsImF1ZGllbmNlIjoid2ViIiwib3BlbkFJZCI6MTM2NywiY3JlYXRlZCI6MTUzMzg3OTM2ODA0Nywicm9sZXMiOiJVU0VSIiwiZXhwIjoxNTM0NDg0MTY4fQ.Gl5L-NpuwhjuPXFuhPax8ak5c64skjDTCBC64N_QdKQ2VT-zZeceuzXB9TqaYJuhkwNYEhrV3pUx1zhMWG7Org"
+     * @apiParam (失败返回参数：) {object}        array 返回结果集
+     * @apiParam (失败返回参数：) {string}        array.status 返回错误码 201
+     * @apiParam (失败返回参数：) {string}        array.msg 返回错误消息
+     * @apiParam (成功返回参数：) {string}        array 返回结果集
+     * @apiParam (成功返回参数：) {string}        array.status 返回状态码 200
+     * @apiParam (成功返回参数：) {string}        array.msg 返回信息
+     * @apiSuccessExample {json} 01 成功示例
+     * {"status":"200","msg":"成功"}
+     * @apiErrorExample {json} 02 失败示例
+     * {"status":" 201","msg":"自动回关已开启"}
+     */
+    function auto_follow_on()
+    {
+        $key = "auto_follow_" . $this->request->uid;
+        if (Cache::has($key)) {
+            throw new ValidateException('自动回关已开启');
+        }
+        Cache::set("auto_follow_" . $this->request->uid, ['create_time' => time()]);
+        return $this->ajaxReturn($this->successCode, '成功');
+    }
+
+
+    /**
+     * @api {post} /Member/auto_follow_off 01、自动回关关闭
+     * @apiGroup Member
+     * @apiVersion 1.0.0
+     * @apiDescription  自动回关关闭
+     * @apiHeader {String} Authorization 用户授权token
+     * @apiHeaderExample {json} Header-示例:
+     * "Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOjM2NzgsImF1ZGllbmNlIjoid2ViIiwib3BlbkFJZCI6MTM2NywiY3JlYXRlZCI6MTUzMzg3OTM2ODA0Nywicm9sZXMiOiJVU0VSIiwiZXhwIjoxNTM0NDg0MTY4fQ.Gl5L-NpuwhjuPXFuhPax8ak5c64skjDTCBC64N_QdKQ2VT-zZeceuzXB9TqaYJuhkwNYEhrV3pUx1zhMWG7Org"
+     * @apiParam (失败返回参数：) {object}        array 返回结果集
+     * @apiParam (失败返回参数：) {string}        array.status 返回错误码 201
+     * @apiParam (失败返回参数：) {string}        array.msg 返回错误消息
+     * @apiParam (成功返回参数：) {string}        array 返回结果集
+     * @apiParam (成功返回参数：) {string}        array.status 返回状态码 200
+     * @apiParam (成功返回参数：) {string}        array.msg 返回信息
+     * @apiSuccessExample {json} 01 成功示例
+     * {"status":"200","msg":"成功"}
+     * @apiErrorExample {json} 02 失败示例
+     * {"status":" 201","msg":"未开启自动回关"}
+     */
+    function auto_follow_off()
+    {
+        $key = "auto_follow_" . $this->request->uid;
+        if (!Cache::has($key)) {
+            throw new ValidateException('未开启自动回关');
+        }
+        Cache::delete($key);
+        return $this->ajaxReturn($this->successCode, '成功');
+    }
+
+    /**
      * @api {post} /Member/check_refresh_update 01、检查是否能够刷新用户信息
      * @apiGroup Member
      * @apiVersion 1.0.0
@@ -240,8 +322,9 @@ class Member extends Common
      */
     function check_refresh_update()
     {
-        if (Cache::has('last_refresh_update_data')) {
-            $last = Cache::get('last_refresh_update_data');
+        $key = 'last_refresh_update_data_' . $this->request->uid;
+        if (Cache::has($key)) {
+            $last = Cache::get($key);
             $jg = (time() - $last['create_time']) < 1 * 60 * 60;
             $sy = 1 * 60 * 60 - (time() - $last['create_time']);
             if ($last['user_id'] == $this->request->uid && $jg) {
@@ -290,9 +373,10 @@ class Member extends Common
             throw new ValidateException("分类不能为空");
         }
 
-        // Cache::delete('last_refresh_update_data');
-        if (Cache::has('last_refresh_update_data')) {
-            $last = Cache::get('last_refresh_update_data');
+        $key = 'last_refresh_update_data_' . $this->request->uid;
+        // Cache::delete($key);
+        if (Cache::has($key)) {
+            $last = Cache::get($key);
             $jg = (time() - $last['create_time']) < 1 * 60 * 60;
             $sy = 1 * 60 * 60 - (time() - $last['create_time']);
             if ($last['user_id'] == $this->request->uid && $jg) {
@@ -315,7 +399,7 @@ class Member extends Common
             "complete_num" => 0
         ];
         $task_id = db("tasklist")->insertGetId($task);
-        Cache::set('last_refresh_update_data', ['user_id' => $this->request->uid, 'create_time' => time(), 'task_id' => $task_id], 1 * 60 * 60);
+        Cache::set($key, ['user_id' => $this->request->uid, 'create_time' => time(), 'task_id' => $task_id], 1 * 60 * 60);
         echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
         $task_details = [];
