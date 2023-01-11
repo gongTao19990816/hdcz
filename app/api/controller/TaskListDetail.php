@@ -59,14 +59,14 @@ class TaskListDetail extends Common
         foreach ($res['list'] as &$row) {
             $row['create_times'] = date("Y-m-d H:i:s", $row['create_time']);
             if ($row['receive_time'] == 0) {
-                $row['receive_times'] = '-';
+                $row['receive_times'] = '';
             } else {
                 $row['receive_times'] = date("Y-m-d H:i:s", $row['receive_time']);
             }
             if ($row['complete_time']) {
                 $row['complete_times'] = date("Y-m-d H:i:s", $row['complete_time']);
             } else {
-                $row['complete_times'] = '-';
+                $row['complete_times'] = '';
             }
             $row['parameter'] = json_decode($row['parameter'], true);
 //            $row['userinfo'] = db('member')->where('uid',$row['crux'])->field('nickname,signature,avatar_thumb,backups_name,phone_number,typecontrol_id')->find();

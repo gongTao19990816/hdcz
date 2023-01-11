@@ -122,9 +122,8 @@ class Member extends Common
             $row['download_count'] = $arr['download_count']; //总下载数
             $row['updata_time'] = date("Y-m-d H:i:s", $row['updata_time']);
         }
-        if ($where['grouping_id'] || $where['typecontrol_id']) {
-            $arrs = db('member')->where(['grouping_id' => $where['grouping_id'], 'typecontrol_id' => $where['typecontrol_id'], 'status' => 1])->field('sum(follower_status) as total_fans,sum(following_count) as total_follow')->find();
-
+        if ($where['a.grouping_id'] || $where['a.typecontrol_id']) {
+            $arrs = db('member')->where(['grouping_id' => $where['a.grouping_id'], 'typecontrol_id' => $where['a.typecontrol_id'], 'status' => 1])->field('sum(follower_status) as total_fans,sum(following_count) as total_follow')->find();
             $res['total_fans'] = $arrs['total_fans'];
             $res['total_follow'] = $arrs['total_follow'];
         }
