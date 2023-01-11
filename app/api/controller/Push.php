@@ -704,7 +704,7 @@ class Push extends Common
             if ($can_use_text_num < $total_need_push_text_num) {
                 throw new ValidateException('主题内容素材库可用数量不足，剩余' . $can_use_text_num);
             }
-            $text_list = db("subjectcontent")->where(['typecontrol_id' => $typecontrol_id, "status" => 1])->limit($total_need_push_text_num)->field("subjectcontent_id,content,use_num")->orderRaw("rand()")->select();
+            $text_list = db("subjectcontent")->where(['typecontrol_id' => $typecontrol_id, "status" => 1])->limit($total_need_push_text_num)->field("subjectcontent_id,content,usage_count")->orderRaw("rand()")->select();
         }
         checkTaskNum($total_need_push_video_num);
         $redis_key = get_task_key('push_video');
@@ -720,13 +720,14 @@ class Push extends Common
             "complete_num" => 0
         ];
         $task_id = db("tasklist")->insertGetId($task);
-         echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
-         flushRequest();
+        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
+        flushRequest();
         $label_str = $user_str = '';
         //组装标签
         if ($label_num) {
-            $label_list = db("label")->where("status", 1)->limit($label_num)->field("label")->orderRaw("rand()")->select();
+            $label_list = db('label')->where("status", 1)->limit($label_num)->field("label,label_id")->orderRaw("rand()")->select();
             foreach ($label_list as $row) {
+                db("label")->where('label_id', $row['label_id'])->inc('usage_count')->update();
                 $user_str = $user_str . " #" . trim($row['label']);
             }
         }
@@ -755,7 +756,9 @@ class Push extends Common
                 //获取随机主题内容
                 if ($text_round && $text_list) {
                     $index = rand($text_list, 1);
-                    $text = $text_list[$index];
+                    $subjectcontent = $text_list[$index];
+                    $text = $subjectcontent['content'];
+                    db('subjectcontent')->where('subjectcontent_id', $subjectcontent['subjectcontent_id'])->inc('usage_count')->update();
                     unset($text_list[$index]);
                 }
                 //组装要发布的主题内容
