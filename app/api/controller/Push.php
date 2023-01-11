@@ -722,6 +722,21 @@ class Push extends Common
         $task_id = db("tasklist")->insertGetId($task);
          echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
          flushRequest();
+        $label_str = $user_str = '';
+        //组装标签
+        if ($label_num) {
+            $label_list = db("label")->where("status", 1)->limit($label_num)->field("label")->orderRaw("rand()")->select();
+            foreach ($label_list as $row) {
+                $user_str = $user_str . " #" . trim($row['label']);
+            }
+        }
+        //组装@用户
+        if ($user_num) {
+            $user_list = db("member")->where("status", 1)->limit($user_num)->field("unique_id")->orderRaw("rand()")->select();
+            foreach ($user_list as $row) {
+                $user_str = $user_str . " @" . $row['unique_id'];
+            }
+        }
         $redis = connectRedis();
         $task_details = [];
         foreach ($uid_list as $uid) {
@@ -737,21 +752,6 @@ class Push extends Common
             foreach ($video_list as $item) {
                 $domain = config("my.host_url");
                 $video_url = $domain . $item['video_url'];
-                $label_str = $user_str = '';
-                //组装标签
-                if ($label_num) {
-                    $label_list = db("label")->where("status", 1)->limit($label_num)->field("label")->orderRaw("rand()")->select();
-                    foreach ($label_list as $row) {
-                        $user_str = $user_str . " #" . trim($row['label']);
-                    }
-                }
-                //组装@用户
-                if ($user_num) {
-                    $user_list = db("member")->where("status", 1)->limit($user_num)->field("unique_id")->orderRaw("rand()")->select();
-                    foreach ($user_list as $row) {
-                        $user_str = $user_str . " @" . $row['unique_id'];
-                    }
-                }
                 //获取随机主题内容
                 if ($text_round && $text_list) {
                     $index = rand($text_list, 1);
@@ -759,13 +759,13 @@ class Push extends Common
                     unset($text_list[$index]);
                 }
                 //组装要发布的主题内容
-                $text = $text . $label_str . $user_str;
+                $texts = $text . $label_str . $user_str;
 
                 $token = doToken($uid['token']);
                 //取http代理
                 $proxy = getHttpProxy($uid['uid']);
 
-                $parameter = ["video_url" => $video_url, "text" => $text, "uid" => $uid['uid'], "token" => $token, "proxy" => $proxy];
+                $parameter = ["video_url" => $video_url, "text" => $texts, "uid" => $uid['uid'], "token" => $token, "proxy" => $proxy];
                 $task_detail = [
                     'task_uid_id' => $task_uid_id,
                     "tasklist_id" => $task_id,
