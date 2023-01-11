@@ -85,7 +85,13 @@ class PrivateLetter extends Common
     {
         $postField = 'typecontrol_id,grouping_id,type,content';
         $data = $this->request->only(explode(',', $postField), 'post', null);
-        $res = PrivateLetterService::add($data);
+        $content = explode("\n", $data['content']);
+        unset($data['content']);
+        foreach ($content as $item) {
+            $data['content'] = $item;
+            $data['api_user_id'] = $this->request->uid;
+            $res = PrivateLetterService::add($data);
+        }
         return $this->ajaxReturn($this->successCode, '操作成功', $res);
     }
 
