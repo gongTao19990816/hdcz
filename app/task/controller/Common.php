@@ -23,15 +23,6 @@ class Common
      */
     public function __construct(App $app)
     {
-        $redis = connectRedis();
-        $keys = $redis->keys(\app\api\model\Tasklist::$task_key_prefix . '*');
-
-        if ($keys && count($keys)) {
-            $key = $keys[0];
-            return json_encode(['status' => $this->successCode, 'msg' => '领取成功', 'data' => json_decode($redis->rpop($key), true)]);
-        } else {
-            return json_encode(['status' => $this->errorCode, 'msg' => '没有任务了']);
-        }
         //exit('禁止访问');
         $this->app = $app;
         $this->request = $this->app->request;

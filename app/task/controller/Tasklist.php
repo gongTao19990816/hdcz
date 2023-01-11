@@ -171,7 +171,7 @@ class Tasklist extends Common
     function has_task()
     {
         $redis = connectRedis();
-        $keys = $redis->keys(\app\api\model\Tasklist::$task_key_prefix . '*');
+        $keys = $redis->keys(config('my.task_key_prefix') . '*');
         $nums = 0;
         foreach ($keys as $key) {
             $nums += $redis->lLen($key);
@@ -183,7 +183,7 @@ class Tasklist extends Common
     function get_task()
     {
         $redis = connectRedis();
-        $keys = $redis->keys(\app\api\model\Tasklist::$task_key_prefix . '*');
+        $keys = $redis->keys(config('my.task_key_prefix') . '*');
 
         if ($keys && count($keys)) {
             $key = $keys[0];
