@@ -97,7 +97,7 @@ class TaskListDetail extends Common
         $taskdetail_id = $this->request->post("tasklistdetail_id/n");
         try {
             $taskdetail = \app\api\model\TaskListDetail::where("tasklistdetail_id", $taskdetail_id)->find()->toArray();
-            $task = \app\api\model\TaskList::where("tasklist_id", $taskdetail['tasklist_id'])->field('redis_key,tasklist_id')->find();
+            $task = \app\api\model\Tasklist::where("tasklist_id", $taskdetail['tasklist_id'])->field('redis_key,tasklist_id')->find();
             if ($taskdetail) {
                 if ($taskdetail['status'] != 2) {
                     throw new \think\Exception("任务未失败");

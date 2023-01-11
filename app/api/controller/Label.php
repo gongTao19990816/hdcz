@@ -113,7 +113,7 @@ class Label extends Common
             $res = LabelService::add($data);
         }
 
-        return $this->ajaxReturn($this->successCode, '操作成功'.'重复'.$i.'个', $res);
+        return $this->ajaxReturn($this->successCode, '操作成功，'.'重复'.$i.'个', $res);
     }
 
     /**
