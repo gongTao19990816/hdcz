@@ -25,8 +25,7 @@ error_reporting(0);
 function get_task_key(string $middle): string
 {
     $key = config('my.task_key_prefix') . $middle . '_' . uniqid();
-//    str_replace('_', ':', $key);
-    return $key;
+    return str_replace('_', ':', $key);
 }
 
 function create_uuid($prefix = "")
