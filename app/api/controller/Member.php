@@ -336,8 +336,8 @@ class Member extends Common
         $key = 'last_refresh_update_data_' . $this->request->uid;
         if (Cache::has($key)) {
             $last = Cache::get($key);
-            $jg = (time() - $last['create_time']) < 1 * 60 * 60;
-            $sy = 1 * 60 * 60 - (time() - $last['create_time']);
+            $jg = (time() - $last['create_time']) < 10 * 60;
+            $sy = 10 * 60 - (time() - $last['create_time']);
             if ($last['user_id'] == $this->request->uid && $jg) {
                 throw new ValidateException("任务正在进行");
             }
@@ -388,8 +388,8 @@ class Member extends Common
         // Cache::delete($key);
         if (Cache::has($key)) {
             $last = Cache::get($key);
-            $jg = (time() - $last['create_time']) < 1 * 60 * 60;
-            $sy = 1 * 60 * 60 - (time() - $last['create_time']);
+            $jg = (time() - $last['create_time']) < 10 * 60;//1 * 60 * 60
+            $sy = 10 * 60 - (time() - $last['create_time']);
             if ($last['user_id'] == $this->request->uid && $jg) {
                 throw new ValidateException("手动刷新频繁，间隔时间剩余：" . $sy . " 秒");
             }
@@ -406,11 +406,12 @@ class Member extends Common
             "task_num" => count($members),
             'redis_key' => $task_key,
             "create_time" => time(),
+            'api_user_id' => $this->request->uid,
             "status" => 1,
             "complete_num" => 0
         ];
         $task_id = db("tasklist")->insertGetId($task);
-        Cache::set($key, ['user_id' => $this->request->uid, 'create_time' => time(), 'task_id' => $task_id], 1 * 60 * 60);
+        Cache::set($key, ['user_id' => $this->request->uid, 'create_time' => time(), 'task_id' => $task_id], 10 * 60);
         echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
         $task_details = [];
@@ -899,7 +900,7 @@ class Member extends Common
     function MemberSaveNew()
     {
         $api_user_id['api_user_id'] = $this->request->uid;
-        $api_user_id['task_type'] = "BatchUpdateUserData";
+        $api_user_id['task_type'] = "GetSelfUserInfo";
         // var_dump($api_user_id);die;
         $tasklist = db('tasklist')->where($api_user_id)->order('tasklist_id desc')->find();
         // var_dump($tasklist);die;
@@ -998,22 +999,27 @@ class Member extends Common
             $redis = connectRedis();
             $details = [];
             foreach ($members as &$member) {
+                //往中间表中添加数据
+                $uid_task['uid'] = $member['uid'];
+                $uid_task['tasklist_id'] = $usertask;
+                $uid_task['num'] = count($type_list);
+                $task_uid_id = db('task_uid')->insert($uid_task);
                 foreach ($type_list as $type) {
-                    $taskdata = [];
-                    for ($i = 0; $i < 3; $i++) {
-                        if ($i == 1) {
-                            $taskdata['type'] = "nickname";
-                            $taskdata['nickname'] = $this->suijisucai(1, $typecontrol_id);
-                        } elseif ($i == 2) {
-                            $taskdata['type'] = "signature";
-                            $taskdata['signature'] = $this->suijisucai(2, $typecontrol_id);
-                        } else {
-                            $taskdata['type'] = "avatar_thumb";
-                            $taskdata['avatar_thumb'] = $this->suijisucai(3, $typecontrol_id);
-                        }
+                    $taskdata = ['t' => $type];
+                    if ('nickname' == $type) {
+                        $taskdata['type'] = "nickname";
+                        $taskdata['nickname'] = $this->suijisucai(1, $old_typecontrol_id ?: $member['typecontrol_id']);
+                    } elseif ('signature' == $type) {
+                        $taskdata['type'] = "signature";
+                        $taskdata['signature'] = $this->suijisucai(2, $old_typecontrol_id ?: $member['typecontrol_id']);
+                    } elseif ('avatar_thumb' == $type) {
+                        $taskdata['type'] = "avatar_thumb";
+                        $taskdata['avatar_thumb'] = $this->suijisucai(3, $old_typecontrol_id ?: $member['typecontrol_id']);
+                    } else {
+                        continue;
                     }
                     $taskdata['uid'] = $member['uid'];
-                    $taskdata['token'] = $member['token'];
+                    $taskdata['token'] = doToken($member['token']);
                     $taskdata['proxy'] = getHttpProxy($member['uid']);
 
                     $adddata['parameter'] = json_encode($taskdata);
@@ -1022,11 +1028,12 @@ class Member extends Common
                     $adddata['tasklist_id'] = $usertask;
                     $addtask['api_user_id'] = $this->request->uid;
                     $adddata['crux'] = $member['uid'];
+                    $adddata['task_uid_id'] = $task_uid_id;
                     unset($adddata['tasklistdetail_id']);
 
                     $arr = \app\api\model\TaskListDetail::add($adddata);
                     $adddata['tasklistdetail_id'] = $arr;
-                    $adddata['parameter'] = json_decode($adddata['parameter'], true);
+                    $adddata['parameter'] = $taskdata;
                     $details[] = $adddata;
                 }
             }
