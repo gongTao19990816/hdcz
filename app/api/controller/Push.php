@@ -252,7 +252,7 @@ class Push extends Common
             $uid_task['uid'] = $member['uid'];
             $uid_task['tasklist_id'] = $task_id;
             $uid_task['num'] = $params['user_chat_upper_limit'];
-            $task_uid_id = db('task_uid')->insert($uid_task);
+            $task_uid_id = db('task_uid')->insertGetId($uid_task);
             if ($total_task_num) {
                 for ($i = 0; $i < $params['user_chat_upper_limit']; $i++) {
                     // 从查询出来的评论列表随机取一个评论，并从评论列表删除
@@ -434,6 +434,7 @@ class Push extends Common
 
         echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
+        unset($member);
         foreach ($members as $member) {
             //往中间表中添加数据
             $uid_task['uid'] = $member['uid'];
@@ -727,7 +728,7 @@ class Push extends Common
             $uid_task['uid'] = $uid['uid'];
             $uid_task['tasklist_id'] = $task_id;
             $uid_task['num'] = $video_num;
-            $task_uid_id = db('task_uid')->insert($uid_task);
+            $task_uid_id = db('task_uid')->insertGetId($uid_task);
             //取登录后的token
 //            $user_info = db('member')->field('token')->where(['uid' => $uid, 'status' => 1])->find();
 //            if (empty($user_info)) continue;
@@ -773,7 +774,7 @@ class Push extends Common
                     "api_user_id" => $this->request->uid,
                     "create_time" => time(),
                     "task_type" => $task_type,
-                    "crux" => $uid
+                    "crux" => $uid['uid']
                 ];
                 unset($task_detail['tasklistdetail_id']);
                 //$task_detail_id = db("tasklistdetail")->insertGetId($task_detail);
