@@ -59,6 +59,7 @@ class Externalmember extends Common
         $where['sources'] = $this->request->post('sources', '', 'serach_in');
         $where['label'] = $this->request->post('label', '', 'serach_in');
         $where['if_collection'] = $this->request->post('if_collection', '', 'serach_in');
+        $where['tasklist_id'] = $this->request->post('tasklist_id', '', 'serach_in');
 
         $field = '*';
         $orderby = 'external_member_id desc';
