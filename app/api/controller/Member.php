@@ -126,6 +126,7 @@ class Member extends Common
             $arrs = db('member')->where(['grouping_id' => $where['a.grouping_id'], 'typecontrol_id' => $where['a.typecontrol_id'], 'status' => 1])->field('sum(follower_status) as total_fans,sum(following_count) as total_follow')->find();
             $res['total_fans'] = $arrs['total_fans'];
             $res['total_follow'] = $arrs['total_follow'];
+
         }
         // $res['ifup'] = MemberModel::where('ifup',1)->count();
         // $this->UpMemberTime();
