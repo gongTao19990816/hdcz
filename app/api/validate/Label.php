@@ -15,13 +15,12 @@ class Label extends validate
 
 
     protected $rule = [
-        'label' => ['require', 'unique:label'],
+        'label' => ['require'],
         'typecontrol_id' => ['require'],
     ];
 
     protected $message = [
         'label.require' => '标签不能为空',
-        'label.unique' => '标签已经存在',
         'typecontrol_id.require' => '分类不能为空',
     ];
 

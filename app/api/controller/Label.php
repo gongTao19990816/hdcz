@@ -101,13 +101,19 @@ class Label extends Common
         $data = $this->request->only(explode(',', $postField), 'post', null);
         $label = explode("\n", $data['label']);
         unset($data['label']);
+        $i = 0;
         foreach ($label as $item) {
+            $label = LabelModel::where(['typecontrol_id'=>$data['typecontrol_id'],'grouping_id'=>$data['grouping_id'],'label'=>$item])->value('label');
+            if($label){
+                $i++;
+                continue;
+            }
             $data['api_user_id'] = $this->request->uid;
             $data['label'] = $item;
             $res = LabelService::add($data);
         }
 
-        return $this->ajaxReturn($this->successCode, '操作成功', $res);
+        return $this->ajaxReturn($this->successCode, '操作成功'.'重复'.$i.'个', $res);
     }
 
     /**
