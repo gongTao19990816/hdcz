@@ -124,7 +124,7 @@ return [
         'login' => 'api/v1/login',
         'userinfo' => 'api/v1/ttapi/profile_self',
     ],
-    "task_key_prefix" => "task_",
+    "task_key_prefix" => "task:",
     "task_max_num" => 10000
 
 ];
