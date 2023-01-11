@@ -18,6 +18,25 @@ class Base extends Common
      * @apiVersion 1.0.0
      * @apiDescription  文件上传，只能传后台设定的文件
      */
+    function hashfile(){
+        $hash = $this->request->post('hash');
+        if(empty($hash)){
+            throw new ValidateException('参数错误');
+        }
+        $fileinfo =  db("file")->where('hash', $hash)->find();
+        if ($fileinfo) {
+            throw new ValidateException('重复素材');
+        } else {
+            return json(['status' => config('my.successCode'),'msg' => '重复素材']);
+        }
+
+    }
+    /**
+     * @api {post} /Base/new_upload 01、文件上传
+     * @apiGroup Base
+     * @apiVersion 1.0.0
+     * @apiDescription  文件上传，只能传后台设定的文件
+     */
     public function new_upload($file = null)
     {
         if (!$_FILES) throw new ValidateException('上传验证失败');
