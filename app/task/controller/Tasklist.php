@@ -171,6 +171,11 @@ class Tasklist extends Common
     function has_task()
     {
         $redis = connectRedis();
+        /*$res = $redis->lRange("taskback_refresh:update:63be56c5d21ba", 0, -1);
+        foreach ($res as $re) {
+            $redis->lPush("task:refresh:update:63be56c5d21ba", $re);
+        }
+        die;*/
         $keys = $redis->keys(config('my.task_key_prefix') . '*');
         $nums = 0;
         foreach ($keys as $key) {

@@ -36,8 +36,8 @@ class TaskListDetail extends Model
         }
         $taskdetail = new self();
         $taskdetail->save($taskdetaildata);
-        queue(\app\api\job\TaskExpire::class, $taskdetail->tasklistadetail_id, 3600);
-        return $taskdetail->tasklistadetail_id;
+        queue(\app\api\job\TaskExpire::class, $taskdetail->tasklistdetail_id, 3600);
+        return $taskdetail->tasklistdetail_id;
     }
 }
 
