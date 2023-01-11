@@ -742,14 +742,14 @@ class Push extends Common
                 if ($label_num) {
                     $label_list = db("label")->where("status", 1)->limit($label_num)->field("label")->orderRaw("rand()")->select();
                     foreach ($label_list as $row) {
-                        $user_str = $user_str . "#" . trim($row['label']);
+                        $user_str = $user_str . " #" . trim($row['label']);
                     }
                 }
                 //组装@用户
                 if ($user_num) {
                     $user_list = db("member")->where("status", 1)->limit($user_num)->field("unique_id")->orderRaw("rand()")->select();
                     foreach ($user_list as $row) {
-                        $user_str = $user_str . "@" . $row['unique_id'];
+                        $user_str = $user_str . " @" . $row['unique_id'];
                     }
                 }
                 //获取随机主题内容
