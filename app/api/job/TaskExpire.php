@@ -3,6 +3,7 @@
 namespace app\api\job;
 
 use app\api\model\TaskListDetail;
+use think\facade\Log;
 use think\queue\Job;
 
 class TaskExpire
@@ -25,9 +26,11 @@ class TaskExpire
 
     function doJob($taskdetail_id)
     {
-        $detail = TaskListDetail::where('taskdetail_id', $taskdetail_id)->find();
+        $detail = TaskListDetail::where('tasklistdetail_id', $taskdetail_id)->find();
+        Log::write("detail:" . json_encode($detail));
         if ($detail->status != TaskListDetail::$successCode && $detail->status != TaskListDetail::$failCode) {
             $detail->save(['status' => TaskListDetail::$expireCode]);
+            return true;
         }
         return true;
     }

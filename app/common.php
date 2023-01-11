@@ -129,6 +129,7 @@ function connectRedis()
     $redis = new \Redis();
     $redis->connect(config("cache.stores.redis.host"), config("cache.stores.redis.port"));
     $redis->auth(config("cache.stores.redis.password"));
+    $redis->select(5);
     return $redis;
 }
 
