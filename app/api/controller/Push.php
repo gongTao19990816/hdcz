@@ -310,7 +310,6 @@ class Push extends Common
             $redis->lPush($redis_key, json_encode($detail));
         }
     }
-
     /**
      * @api {post} /Push/follow 02、发布关注任务
      * @apiGroup Push
@@ -337,6 +336,181 @@ class Push extends Common
      * {"status":" 201","msg":"查询失败"}
      */
     function follow()
+    {
+        $params = $this->request->post();
+        $task_type = "Follow";
+
+        //验证规则
+        $rule = [
+            'grouping_id' => 'require',
+            'typecronl_id' => 'require',
+            'country_list' => 'require',
+            'tasklist_id_list' => 'require',
+            'user_follow_upper_limit' => 'require',
+            'rate_min' => 'require',
+            'rate_max' => 'require',
+            'can_fail_num' => 'require',
+            'task_name' => 'require'
+        ];
+
+        //错误提示
+        $msg = [
+            'grouping_id.require' => '分组id必传',
+            'typecronl_id.require' => '分组id必传',
+            'country_list.require' => '国家必传',
+            'tasklist_id_list.require' => 'tasklist_id_list（数据来源（采集任务ID））必传',
+            'user_follow_upper_limit.require' => 'user_follow_upper_limit（单号关注上限）必传',
+            'rate_min.require' => 'rate_min（关注频率最小值）必传',
+            'rate_max.require' => 'rate_max（关注频率最大值）必传',
+            'can_fail_num.require' => 'can_fail_num（可失败次数）必传',
+            'task_name' => '任务名称必传'
+        ];
+        //调用验证器
+        $validate = Validate::rule($rule)->message($msg);
+        if (!$validate->check($params)) {
+            throw new ValidateException($validate->getError());
+        }
+
+        if ($params['black_list']) {
+            $black_list = $params['black_list'];
+            if (!in_array("no_avatar", $black_list) && !in_array("no_aweme", $black_list) && !in_array("historical_users", $black_list) && !in_array("no_nickname", $black_list)) {
+                throw new ValidateException(['未知的黑名单类型', ['black_list' => ['no_avatar', 'no_aweme', 'historical_users', 'no_nickname']]]);
+            }
+        }
+        //操作用户查询
+        $members = db('member')->where(['typecontrol_id' => $params['typecronl_id'], 'grouping_id' => $params['grouping_id']])->field('uid,sec_uid,unique_id,token')->select();
+        $user_follow_upper_limit = $params['user_follow_upper_limit'];
+        $total_task_num = 0;
+        foreach ($members as &$member) {
+            // 该账号今日关注次数
+            $member_follow_num = db("followuser")->where("uid", $member['uid'])->whereDay("create_time")->count();
+            $member_task_num = ($user_follow_upper_limit - $member_follow_num);
+            $member['today_follow_num'] = $member_follow_num;
+            if (!$member_task_num) {
+                continue;
+            }
+            $total_task_num += $member_task_num;
+        }
+        $external_members = ExternalmemberModel::where(['secret' => 0])
+            ->where(function ($query) use ($params) {
+                if ($params['follower_status']) $query->where('follower_status', '<', $params['follower_status']);
+                if ($params['following_count']) $query->where('following_count', '<', $params['following_count']);
+                if ($params['total_favorited']) $query->where('total_favorited', '<', $params['total_favorited']);
+                $black_list = $params['black_list'];
+                if (in_array("no_avatar", $black_list)) {
+                    $query->where("has_avatar", 0);
+                }
+                if (in_array("no_aweme", $black_list)) {
+                    $query->where("aweme_count", '>', 0);
+                }
+                if (in_array("historical_users", $black_list)) {
+                    $query->where("is_follow", 1);
+                }
+                if (in_array("no_nickname", $black_list)) {
+                    $query->where("has_nickname", 0);
+                }
+            })
+            ->where(['tasklist_id' => ['in', implode($params['tasklist_id_list'], ",")], 'country' => ['in', implode($params['country_list'], ",")]])
+            ->field("uid,sec_uid")->select()->toArray();
+
+        if (count($external_members) < $total_task_num) {
+            throw new ValidateException('当前条件下可关注博主仅剩' . count($external_members) . '个');
+        }
+        checkTaskNum($total_task_num);
+        $redis_key = get_task_key('follow');
+        $task = [
+            "task_name" => $params['task_name'],
+            "task_type" => $task_type,
+            "task_num" => $total_task_num,
+            "create_time" => time(),
+            'redis_key' => $redis_key,
+            "status" => 1,
+            "complete_num" => 0,
+            'api_user_id' => $this->request->uid
+        ];
+        $task_id = db("tasklist")->insertGetId($task);
+        //往中间表中添加数据
+
+        echo json_encode(['status' => 200, 'msg' => "任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
+        flushRequest();
+        unset($member);
+        foreach ($members as $member) {
+            //往中间表中添加数据
+            $uid_task['uid'] = $member['uid'];
+            $uid_task['tasklist_id'] = $task_id;
+            $uid_task['num'] = $user_follow_upper_limit;
+            $task_uid_id = db('task_uid')->insert($uid_task);
+            for ($i = 0; $i < ($user_follow_upper_limit - $member['today_follow_num']); $i++) {
+                if ($external_members) {
+                    $delay = rand($params['rate_min'], $params['rate_max']); //关注频率，延迟多少秒执行
+                    // 从查询出来的评论列表随机取一个评论，并从评论列表删除
+                    $external_member_index = array_rand($external_members);
+                    $external_member = $external_members[$external_member_index];
+                    unset($external_members[$external_member_index]);
+                    if ($external_member) {
+                        $token = doToken($member['token']);
+                        //取http代理
+                        $proxy = getHttpProxy($token['user']['uid']);
+
+                        $parameter = [
+                            'member_uid' => $member['uid'],
+                            'user_id' => $external_member['uid'],
+                            'sec_user_id' => $external_member['sec_uid'],
+                            'from' => 19,
+                            'from_pre' => 13,
+                            'channel_id' => 3,
+                            'type' => 1, // # 1 表示关注，0 表示取消关注
+                            "token" => $token,
+                            "proxy" => $proxy
+                        ];
+                        $task_detail = [
+                            'task_uid_id' => $task_uid_id,
+                            "tasklist_id" => $task_id,
+                            "parameter" => $parameter,
+                            "status" => 1,
+                            "create_time" => time(),
+                            "task_type" => $task_type,
+                            "crux" => $member['uid']
+                        ];
+                        unset($task_detail['tasklistdetail_id']);
+                        //$task_detail_id = db("tasklistdetail")->insertGetId($task_detail);
+                        $task_detail_id = \app\api\model\TaskListDetail::add($task_detail);
+                        $task_detail['tasklistdetail_id'] = $task_detail_id;
+                        queue(FollowTask::class, $task_detail, $delay);
+                    }
+                }
+            }
+
+
+        }
+    }
+
+    /**
+     * @api {post} /Push/follow_old 02、发布关注任务旧版，当弃用
+     * @apiGroup Push
+     * @apiVersion 1.0.0
+     * @apiDescription  发布关注任务
+     * @apiParam (输入参数：) {int}              [grouping_id] 分组ID
+     * @apiParam (输入参数：) {int}              [typecronl_id] 分类ID
+     * @apiParam (输入参数：) {string}           [country_list] 国家
+     * @apiParam (输入参数：) {array}            [tasklist_id_list] 数据来源ID列表
+     * @apiParam (输入参数：) {int}              [user_follow_upper_limit] 单号关注上限
+     * @apiParam (输入参数：) {int}              [rate_min] 频率最小
+     * @apiParam (输入参数：) {int}              [rate_max] 频率最大
+     * @apiParam (输入参数：) {int}              [can_fail_num] 连续失败次数
+     * @apiParam (输入参数：) {string}           [task_name] 任务名称
+     * @apiParam (失败返回参数：) {object}        array 返回结果集
+     * @apiParam (失败返回参数：) {string}        array.status 返回错误码 201
+     * @apiParam (失败返回参数：) {string}        array.msg 返回错误消息
+     * @apiParam (成功返回参数：) {string}        array 返回结果集
+     * @apiParam (成功返回参数：) {string}        array.status 返回错误码 200
+     * @apiParam (成功返回参数：) {string}        array.msg 返回成功信息
+     * @apiSuccessExample {json} 01 成功示例
+     * {"status":"200","mas":"创建成功"}
+     * @apiErrorExample {json} 02 失败示例
+     * {"status":" 201","msg":"查询失败"}
+     */
+    function follow_old()
     {
         $params = $this->request->post();
         $task_type = "Follow";

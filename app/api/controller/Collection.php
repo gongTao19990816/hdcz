@@ -137,7 +137,7 @@ class Collection extends Common
          * hash：6786ffc93d6a02f2b30a98ee94132937
          * file：/uploads/api/202212/638b39ace8149.png
         */
-        $redis_key = get_task_key('get_aweme_list');
+        $redis_key = get_task_key('collection_user');
 
         $task = [
             'redis_key' => $redis_key,
@@ -147,7 +147,7 @@ class Collection extends Common
             "create_time" => time(),
             "status" => 1,
         ];
-        $task_id = db("tasklisttwo")->insertGetId($task);
+        $task_id = db("tasklist")->insertGetId($task);
         echo json_encode(['status' => 200, 'msg' => "视频任务发布中，可使用GET传递task_id访问'/api/tasklist/get_task_create_progress'查询创建进度", "data" => ['task_id' => $task_id]]);
         flushRequest();
 

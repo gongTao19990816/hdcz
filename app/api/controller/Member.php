@@ -1000,19 +1000,17 @@ class Member extends Common
             foreach ($members as &$member) {
                 foreach ($type_list as $type) {
                     $taskdata = [];
-                    switch ($type) {
-                        case "nickname":
+                    for ($i = 0; $i < 3; $i++) {
+                        if ($i == 1) {
                             $taskdata['type'] = "nickname";
-                            $taskdata['nickname'] = $this->suijisucai(1, $member['typecontrol_id']);
-                            break;
-                        case "avatar_thumb":
-                            $taskdata['type'] = "avatar_thumb";
-                            $taskdata['avatar_thumb'] = $this->suijisucai(3, $member['typecontrol_id']);
-                            break;
-                        case "signature":
+                            $taskdata['nickname'] = $this->suijisucai(1, $typecontrol_id);
+                        } elseif ($i == 2) {
                             $taskdata['type'] = "signature";
-                            $taskdata['signature'] = $this->suijisucai(2, $member['typecontrol_id']);
-                            break;
+                            $taskdata['signature'] = $this->suijisucai(2, $typecontrol_id);
+                        } else {
+                            $taskdata['type'] = "avatar_thumb";
+                            $taskdata['avatar_thumb'] = $this->suijisucai(3, $typecontrol_id);
+                        }
                     }
                     $taskdata['uid'] = $member['uid'];
                     $taskdata['token'] = $member['token'];
@@ -1099,17 +1097,17 @@ class Member extends Common
     {
         $where['typecontrol_id'] = $typecontrol_id;
         if ($type == 1) {
-            $res = db('nickname')->where($where)->order('usage_count asc')->limit(1)->select()->toArray();
-            $data = $res[0]['nickname'];
-            db('nickname')->where('nickname_id', $res[0]['nickname_id'])->inc('usage_count')->update();
+            $res = db('nickname')->where($where)->order('usage_count asc')->find();
+            $data = $res['nickname'];
+            db('nickname')->where('nickname_id', $res['nickname_id'])->inc('usage_count')->update();
         } elseif ($type == 2) {
-            $res = db('autograph')->where($where)->order('usage_count asc')->limit(1)->select()->toArray();
-            $data = $res[0]['autograph'];
-            db('autograph')->where('autograph_id', $res[0]['autograph_id'])->inc('usage_count')->update();
+            $res = db('autograph')->where($where)->order('usage_count asc')->find();
+            $data = $res['autograph'];
+            db('autograph')->where('autograph_id', $res['autograph_id'])->inc('usage_count')->update();
         } elseif ($type == 3) {
-            $res = db('headimage')->where($where)->order('usage_count asc')->limit(1)->select()->toArray();
-            $data = config('my.host_url') . $res[0]['image'];
-            db('headimage')->where('headimage_id', $res[0]['headimage_id'])->inc('usage_count')->update();
+            $res = db('headimage')->where($where)->order('usage_count asc')->find();
+            $data = config('my.host_url') . $res['image'];
+            db('headimage')->where('headimage_id', $res['headimage_id'])->inc('usage_count')->update();
         }
         return $data;
     }
