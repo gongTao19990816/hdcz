@@ -117,8 +117,8 @@ return [
 
 // 	'main_link'   =>'http://165.22.102.235:8004/', 旧的
     'main_link' => 'http://192.74.232.45:8004/',
-    'TT_PRO' => 'https://coralip.com/api/v2/getIP?username=pps_ccedlm&password=ssviezjyez&noloop=0&protocol=0&count=1&region=SG&keep_time=2&type=text', //tt socks5代理链接地址
-    'TT_PRO_HTTP' => 'https://coralip.com/api/v2/getIP?username=pps_ccedlm&password=ssviezjyez&noloop=0&protocol=1&count=1&region=SG&keep_time=2&type=text', //tt http代理链接地址
+    'TT_PRO' => 'http://coralip.com/api/v2/getIP?username=pps_ccedlm&password=ssviezjyez&noloop=0&protocol=0&count=1&region=SG&keep_time=2&type=text', //tt socks5代理链接地址
+    'TT_PRO_HTTP' => 'http://coralip.com/api/v2/getIP?username=pps_ccedlm&password=ssviezjyez&noloop=0&protocol=1&count=1&region=SG&keep_time=2&type=text', //tt http代理链接地址
     //请求外部接口
     'link_url' => [
         'login' => 'api/v1/login',
