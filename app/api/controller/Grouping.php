@@ -161,6 +161,7 @@ class Grouping extends Common
             db('grouping')->where('grouping_id',$v)->delete();
         }
         return $this->ajaxReturn($this->successCode, '操作成功');
+
     }
 
 
