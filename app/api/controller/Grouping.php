@@ -139,6 +139,9 @@ class Grouping extends Common
             throw new ValidateException('参数错误');
         }
         $data['grouping_id'] = explode(',', $idx);
+        if ($data['grouping_id'] == 3){
+            throw new ValidateException('系统默认分组，不让删除');
+        }
         try {
             GroupingModel::destroy($data, true);
         } catch (\Exception $e) {

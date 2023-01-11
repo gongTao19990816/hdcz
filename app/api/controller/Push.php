@@ -774,6 +774,7 @@ class Push extends Common
                 unset($task_detail['tasklistdetail_id']);
                 //$task_detail_id = db("tasklistdetail")->insertGetId($task_detail);
                 $task_detail_id = \app\api\model\TaskListDetail::add($task_detail);
+
                 $task_detail['tasklistdetail_id'] = $task_detail_id;
                 $task_details[] = $task_detail;
             }

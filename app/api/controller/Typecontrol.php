@@ -230,6 +230,9 @@ class Typecontrol extends Common
             throw new ValidateException('参数错误');
         }
         $data['typecontrol_id'] = explode(',', $idx);
+        if ($data['typecontrol_id'] == 3){
+            throw new ValidateException('系统默认分类，不让删除');
+        }
         try {
             TypecontrolModel::destroy($data, true);
         } catch (\Exception $e) {
