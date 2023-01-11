@@ -138,14 +138,27 @@ class Grouping extends Common
         if (empty($idx)) {
             throw new ValidateException('参数错误');
         }
-        if(strpos($idx,'3') !== false){
-            throw new ValidateException('系统默认分组，不让删除');
-        }
+
         $data['grouping_id'] = explode(',', $idx);
-        try {
-            GroupingModel::destroy($data, true);
-        } catch (\Exception $e) {
-            abort(config('my.error_log_code'), $e->getMessage());
+        foreach ($data['grouping_id'] as $k => $v){
+            if($v == 3){
+                continue;
+            }
+            $typecontrol_id = db('typecontrol')->where('grouping_id',$v)->field('typecontrol_id')->select()->toArray();
+            // var_dump($typecontrol_id);die;
+            if($typecontrol_id){
+                // var_dump($typecontrol_id);die;
+                foreach ($typecontrol_id as $key => $val){
+                    $member = db('member')->where(['typecontrol_id'=>$val,'grouping_id'=>$v])->field('member_id,typecontrol_id,grouping_id')->select()->toArray();
+                    if($member){
+                        foreach ($member as &$uid){
+                            db('member')->where('member_id',$uid['member_id'])->update(['typecontrol_id'=>3,'grouping_id'=>3]);
+                        }
+                    }
+                    db('typecontrol')->where('typecontrol_id',$val['typecontrol_id'])->delete();
+                }
+            }
+            db('grouping')->where('grouping_id',$v)->delete();
         }
         return $this->ajaxReturn($this->successCode, '操作成功');
     }
