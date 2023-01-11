@@ -728,7 +728,7 @@ class Push extends Common
             $label_list = db('label')->where("status", 1)->limit($label_num)->field("label,label_id")->orderRaw("rand()")->select();
             foreach ($label_list as $row) {
                 db("label")->where('label_id', $row['label_id'])->inc('usage_count')->update();
-                $user_str = $user_str . " #" . trim($row['label']);
+                $label_str = $label_str . " #" . trim($row['label']);
             }
         }
         //组装@用户
