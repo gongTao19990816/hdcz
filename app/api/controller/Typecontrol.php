@@ -152,7 +152,7 @@ class Typecontrol extends Common
             throw new ValidateException('参数错误');
         }
         $data['api_user_id'] = $this->request->uid;
-        $res = db('typecontrol')->insert($data);
+        $res = db('typecontrol')->insertGetId($data);
         return $this->ajaxReturn($this->successCode, '操作成功', $res);
     }
 
