@@ -16,7 +16,7 @@ return [
 
     'config_module_id' => 41,
     'max_dump_data' => 50000,
-    'new_upload_dir'    => './uploads/uploadfiles',
+    'new_upload_dir'    => './uploads/hdcz',
     'upload_dir' => './uploads/hdcz',
     'upload_subdir' => 'Ym',
     'nocheck' => ['admin/Login/verify', 'admin/Login/index', 'admin/Index/index', 'admin/Index/main', 'admin/Login/out', 'admin/Upload/editorUpload', 'admin/Upload/uploadImages', 'admin/Upload/uploadUeditor', 'admin/Login/captcha', 'admin/Login/aliOssCallBack'],

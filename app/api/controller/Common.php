@@ -166,7 +166,7 @@ class Common
 
 
                 $cand = '/www/wwwroot/copy_file --src="' . app()->getRootPath() . 'public/upload_temp/' . $info . '" --output="' .
-                    app()->getRootPath() . 'public/uploads/uploadfiles/' . $info . '"';
+                    app()->getRootPath() . 'public/uploads/hdcz/' . $info . '"';
                 system($cand);
                 unlink(app()->getRootPath() . 'public/upload_temp/' . $info);
 
