@@ -83,7 +83,9 @@ class Tasklist extends Common
             $item['success_num'] = db('tasklistdetail')->where(['tasklist_id'=>$item['tasklist_id'],'crux'=>$item['uid'],'status'=>0])->count();
             $item['fail_num'] = db('tasklistdetail')->where(['tasklist_id'=>$item['tasklist_id'],'crux'=>$item['uid'],'status'=>2])->count();
             $item['tasklistdetail'] = db('tasklistdetail')->where(['tasklist_id'=>$item['tasklist_id'],'crux'=>$item['uid']])->order('tasklist_id desc')->find();
-
+            if($item['update_time']){
+                $item['update_time'] =  date("Y-m-d H:i:s",$item['update_time']);
+            }
         }
         return $this->ajaxReturn($this->successCode, '返回成功', $res);
     }
