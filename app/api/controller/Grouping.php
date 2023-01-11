@@ -138,10 +138,10 @@ class Grouping extends Common
         if (empty($idx)) {
             throw new ValidateException('参数错误');
         }
-        $data['grouping_id'] = explode(',', $idx);
-        if ($data['grouping_id'] == 3){
+        if(strpos($idx,'3') !== false){
             throw new ValidateException('系统默认分组，不让删除');
         }
+        $data['grouping_id'] = explode(',', $idx);
         try {
             GroupingModel::destroy($data, true);
         } catch (\Exception $e) {
